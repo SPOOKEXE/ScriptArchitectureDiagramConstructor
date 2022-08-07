@@ -1,0 +1,16 @@
+{
+	"name": "script-architecture-diagram-constructor",
+	"tree": {
+		"$className": "DataModel",
+		"ServerStorage": {
+			"$className": "ServerStorage",
+			"$path": "src/ServerStorage",
+			"$ignoreUnknownInstances": true,
+			"BuildScriptArchitectDiagram": {
+				"$className": "Folder",
+				"$path": "src",
+				"$ignoreUnknownInstances": true
+			}
+		}
+	}
+}
