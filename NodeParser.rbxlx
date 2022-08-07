@@ -7692,21 +7692,22 @@ end
 ParseStatementList(false, SampleData.StatementList) -- ModuleScript parse [Type : StatList]
 
 print(ScopeConnectionMap)
-local baseRegistryString = 'REGISTRY %s DEPTH %s || CALL FUNCTIONS (%s), CREATE FUNCTIONS (%s), SET VARIABLE (%s)'
+local baseRegistryString = 'REGISTRY %s DEPTH %d || CALL FUNCTIONS (%d), CREATE FUNCTIONS (%d), SET VARIABLE (%d)'
 for registryUUID, data in pairs( ScopeRegistries ) do
-	print( string.format(baseRegistryString, registryUUID, data.Depth, #data.CallFunctionNodes, #data.CreateFunctionNodes, #data.SetVariableNodes) )
+	print( string.format(baseRegistryString, registryUUID, data.Depth or 0, #data.CallFunctionNodes, #data.CreateFunctionNodes, #data.SetVariableNodes) )
 end
 
 print(string.rep('\n', 10))
 
-for registryID, registryData in pairs(ScopeConnectionMap) do
+for registryID, registryData in pairs(ScopeRegistries) do
+	print('==== ', registryID, ' ====')
 	for _, SetVariableNode in ipairs( registryData.SetVariableNodes ) do
 		local statementIndex, dataType, data, depth = unpack(SetVariableNode)
 		print('SET VARIABLE ; ', statementIndex, dataType, data.VarList[1].Source, depth)
 	end
 	for _, CreateFunctionNode in ipairs( registryData.CreateFunctionNodes ) do
 		local statementIndex, dataType, data, depth = unpack(CreateFunctionNode)
-		print('CREATE FUNCTION ; ', statementIndex, dataType, data.NameChain, depth)
+		print('CREATE FUNCTION ; ', statementIndex, dataType, data.NameChain[#data.NameChain].Source, depth)
 	end
 	for _, functionCallNode in ipairs( registryData.CallFunctionNodes ) do
 		local statementIndex, dataType, data, depth = unpack(functionCallNode)

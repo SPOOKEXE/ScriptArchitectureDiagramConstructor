@@ -72,6 +72,7 @@ end
 print(string.rep('\n', 10))
 
 for registryID, registryData in pairs(ScopeRegistries) do
+	print('==== ', registryID, ' ====')
 	for _, SetVariableNode in ipairs( registryData.SetVariableNodes ) do
 		local statementIndex, dataType, data, depth = unpack(SetVariableNode)
 		print('SET VARIABLE ; ', statementIndex, dataType, data.VarList[1].Source, depth)
