@@ -21,23 +21,23 @@ local ParseHandlers = {
 
 function ParseStatementList(parentRegistryUUID, StatementList, depth)
 	print('Step Depth; ', depth or 0)
-	
+
 	local currentRegistryUUID = HttpService:GenerateGUID(false)
 	if ScopeConnectionMap[parentRegistryUUID] then
 		table.insert(ScopeConnectionMap[parentRegistryUUID], currentRegistryUUID)
 	else
 		ScopeConnectionMap[parentRegistryUUID] = {currentRegistryUUID}
 	end
-	
+
 	local scopeReg = {
 		Depth = depth,
 		SetVariableNodes = { },
 		CreateFunctionNodes = { },
 		CallFunctionNodes = { },
 	}
-	
+
 	ScopeRegistries[currentRegistryUUID] = scopeReg
-	
+
 	for statementIndex, data in pairs( StatementList ) do
 		local parsed = true
 		if ParseHandlers[data.Type] then

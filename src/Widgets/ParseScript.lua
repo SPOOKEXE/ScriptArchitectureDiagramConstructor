@@ -4,6 +4,9 @@ local Selection = game:GetService('Selection')
 local PluginFolder = script.Parent.Parent
 local PluginModules = require(PluginFolder.Modules)
 
+local NodeTreeContainer = PluginModules.Classes.NodeTree
+local ScriptENVParser = PluginModules.Classes.ScriptENVParser
+
 local ScriptUtility = PluginModules.Utility.ScriptUtility
 
 local SystemsContainer = {}
@@ -16,13 +19,13 @@ Module.Visible = false
 Module.DockWidget = false
 Module.plugin = false
 
-function Module:ParseSelection()
+function Module:TokenParseSelections()
 	local whitelistClassName = {'LocalScript', 'Script', 'ModuleScript'}
 	local parsedInfoArray = {}
 	local ScriptInstances = Selection:Get()
 	for _, scriptInstance in ipairs( ScriptInstances ) do
 		if table.find(whitelistClassName, scriptInstance.ClassName) then
-			table.insert(parsedInfoArray, {	scriptInstance:GetFullName(), ScriptUtility:RawTokenParse( scriptInstance ) })
+			table.insert(parsedInfoArray, { scriptInstance:GetFullName(), ScriptUtility:RawTokenParse( scriptInstance ) })
 		end
 	end
 	return parsedInfoArray
@@ -83,9 +86,16 @@ function Module:Init(otherSystems, plugin)
 	TriggerButton.Text = 'Parse Script Tokens'
 	TriggerButton.TextScaled = true
 	TriggerButton.Activated:Connect(function()
-		print("parse selections")
-		local results = Module:ParseSelection()
-		print(results[1])
+		local tokenScriptArray = Module:TokenParseSelections()
+		for _, t in ipairs( tokenScriptArray ) do
+			local _, tokenDictionary = unpack(t)
+			local envParser = ScriptENVParser.New()
+			local envTable = envParser:ParseTokens(tokenDictionary)
+			envParser:OutputParse()
+			table.insert(t, envParser)
+		end
+		-- local nodeTreeClass = Module:ConstructPerScriptNodeTrees(result)
+		-- SystemsContainer.FlowDiagram:LoadNodeTree( nodeTreeClass )
 	end)
 
 	local PadUDim = UDim.new(0.05, 0)

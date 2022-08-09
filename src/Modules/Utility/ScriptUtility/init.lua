@@ -13,22 +13,17 @@ function Module:RawTokenParse( ScriptInstance : SourceScript ) : table
 	return parseModule(tokenModule(ScriptInstance.Source))
 end
 
-function Module:GetRequireTree( sourceContainer : SourceScript )
-	
+function Module:GetScriptRequireTree( sourceContainer : SourceScript )
+	-- parse the script
+	-- get an array of scripts that are required by this module
 end
 
-function Module:GetFunctionTree( sourceContainer : SourceScript )
-	
-end
-
-function Module:GetVariableTree( sourceContainer : SourceScript )
-	
-end
-
-function Module:LinkFunctionTree( ... : SourceScript )
-
+function Module:LinkScriptsToTree( ... : SourceScript )
 	local sources = { ... }
-
+	-- parse scripts
+	-- find connections between scripts
+	-- provide a table of which script (FullName?) require other scripts
+	return {}
 end
 
 return Module

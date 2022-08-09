@@ -117,13 +117,13 @@ local function parse(tokens)
 		function node:GetFirstToken()
 			local t = getf(self)
 			if not t then
-				assert(t)
+				assert(t, "failed")
 			end
 			return t
 		end
 		function node:GetLastToken()
 			local t = getl(self)
-			assert(t)
+			assert(t, "failed")
 			return t
 		end
 		return node
@@ -181,7 +181,7 @@ local function parse(tokens)
 		end
 	end
 
-	function tableexpr()
+	local function tableexpr()
 		local obrace = expect('Symbol', '{')
 		local entries: {} = {}
 		local separators = {}
@@ -998,7 +998,6 @@ local function parse(tokens)
 	local function forstat()
 		local forKw = get()
 		local loopVars, loopVarColons, loopVarTypes, loopVarCommas = varlist()
-		local node = {}
 		if peek().Source == '=' then
 			local eqTk = get()
 			local exprList, exprCommaList = exprlist()
