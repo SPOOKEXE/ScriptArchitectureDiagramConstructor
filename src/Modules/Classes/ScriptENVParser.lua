@@ -45,9 +45,9 @@ function Class:ParseStatementList(parentRegistryUUID, StatementList, depth)
 		ParentScopeUUID = parentRegistryUUID,
 		ScopeID = currentRegistryUUID,
 		ChildScopesIDs = {},
-		SetVariableNodes = { },
-		CreateFunctionNodes = { },
-		CallFunctionNodes = { },
+		SetVariableNodes = {},
+		CreateFunctionNodes = {},
+		CallFunctionNodes = {},
 		Depth = depth,
 	}
 
