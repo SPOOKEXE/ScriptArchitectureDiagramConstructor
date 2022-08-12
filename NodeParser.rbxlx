@@ -44,7 +44,6 @@
 			</Vector3>
 			<string name="Name">Workspace</string>
 			<bool name="NeedsPivotMigration">false</bool>
-			<token name="PhysicsInertiaAndVolumeFix">0</token>
 			<token name="PhysicsSteppingMethod">0</token>
 			<Ref name="PrimaryPart">null</Ref>
 			<token name="ReplicateInstanceDestroySetting">0</token>
@@ -7739,6 +7738,15 @@ end
 			<token name="VolumetricAudio">1</token>
 		</Properties>
 	</Item>
+	<Item class="VideoCaptureService" referent="RBX8BEAA3C6610D4C6DA4EC61528040A531">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<string name="Name">Instance</string>
+			<int64 name="SourceAssetId">-1</int64>
+			<BinaryString name="Tags"></BinaryString>
+			<UniqueId name="UniqueId">50250e3257db262a030774450002228a</UniqueId>
+		</Properties>
+	</Item>
 	<Item class="NonReplicatedCSGDictionaryService" referent="RBX8D58D7AE1F684D7090FD759CE6475E1B">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
@@ -10848,6 +10856,112 @@ return Class]]></ProtectedString>
 							<BinaryString name="Tags"></BinaryString>
 							<UniqueId name="UniqueId">310dd1710dcb8bab030416e9000307a2</UniqueId>
 						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBXA0B9304C2DDE4939A9E1A8485E7BB3AE">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">GuiClasses</string>
+							<string name="ScriptGuid">{D06DB958-2AFE-40CA-8979-D82A70B152CE}</string>
+							<ProtectedString name="Source"><![CDATA[local Module = {}
+
+for _, ModuleScript in ipairs( script:GetChildren() ) do
+	if ModuleScript:IsA('ModuleScript') then
+		Module[ModuleScript.Name] = require(ModuleScript)
+	end
+end
+
+return Module]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">50250e3257db262a0307744500032827</UniqueId>
+						</Properties>
+						<Item class="ModuleScript" referent="RBX22C9F3CFF98443A2A84F1A1CECD75BEB">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<Content name="LinkedSource"><null></null></Content>
+								<string name="Name">TabMenu</string>
+								<string name="ScriptGuid">{9E652550-35C4-4B00-A88F-768E4CD598C0}</string>
+								<ProtectedString name="Source"><![CDATA[
+local MaidClass = require(script.Parent.Parent.Maid)
+
+local function DetermineButton(ButtonFrame, customDeterminer) : GuiButton?
+	if customDeterminer then
+		return customDeterminer(ButtonFrame)
+	else
+		local ButtonInFrame = ButtonFrame:FindFirstChildWhichIsA('ImageButton')
+		if ButtonInFrame then
+			return ButtonInFrame
+		elseif ButtonFrame:IsA('ImageButton') then
+			return ButtonFrame
+		end
+	end
+	return nil
+end
+
+-- // Module // --
+local Class = {}
+Class.__index =Class
+
+type determineFunc = (GuiObject?) -> (ImageButton?)
+function Class.New(ButtonParentFrame, FramesParent, determineButton : determineFunc?)
+
+	local MaidInstance = MaidClass.New()
+	local HashMap = {}
+
+	local self = setmetatable({
+		HashMap = HashMap,
+		Maid = MaidInstance,
+	}, Class)
+
+	self:Init(ButtonParentFrame, FramesParent, determineButton)
+
+	return self
+end
+
+function Class:ToggleFrame( TargetFrame, ForceEnabled )
+	for _, FrameObj in pairs(self.HashMap) do
+		if TargetFrame == FrameObj then
+			FrameObj.Visible = typeof(ForceEnabled) ~= 'boolean' and (not FrameObj.Visible) or ForceEnabled
+		else
+			FrameObj.Visible = false
+		end
+	end
+end
+
+function Class:Init(ButtonParentFrame : GuiObject, FramesParent : GuiObject, determineButton)
+	for index, ButtonObject in ipairs( ButtonParentFrame:GetChildren() ) do
+		local Button = DetermineButton(ButtonParentFrame, determineButton)
+		if not Button then
+			continue
+		end
+
+		local Frame = FramesParent:FindFirstChild(ButtonObject.Name)
+		if not Frame then
+			warn('Could not find matching frame ; ', ButtonObject.Name, ' in parent frame ; ', FramesParent:GetFullName())
+			continue
+		end
+
+		Frame.Visible = (index == 1)
+
+		self.HashMap[Frame] = Button
+		self.Maid:Give(Button.Activated:Connect(function()
+			self:ToggleFrame(Frame)
+		end))
+	end
+end
+
+function Class:Destroy()
+	self.Maid:Cleanup()
+end
+
+return Class
+]]></ProtectedString>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">50250e3257db262a0307744500032829</UniqueId>
+							</Properties>
+						</Item>
 					</Item>
 				</Item>
 				<Item class="ModuleScript" referent="RBX1A25227E26C4409E82877A44BE8FE981">
@@ -18307,42 +18421,98 @@ return Base64]]></ProtectedString>
 					<string name="ScriptGuid">{9244D2F3-DE1E-4EFD-99EE-D705C288A6CB}</string>
 					<ProtectedString name="Source"><![CDATA[
 local pluginToolbar = plugin:CreateToolbar("Script Architecture Diagram")
-local pluginToolbarButton = pluginToolbar:CreateButton("Open Widget", "Open The Widget", "Open Button", "Text")
+local pluginScriptParseButton = pluginToolbar:CreateButton("Open Widget", "Open The Widget", "Open Button", "Text")
 
 local pluginFolder = script.Parent
-local pluginModules = require(pluginFolder:WaitForChild('Modules'))
-local pluginWidgetsModule = require(pluginFolder:WaitForChild('Widgets'))
+local Modules = require(pluginFolder:WaitForChild('Modules'))
+local WidgetModule = require(pluginFolder:WaitForChild('Widgets'))
 
-local pluginMaid = pluginModules.Classes.Maid.New()
+local MaidClass = Modules.Classes.Maid
 
-local activeWidgets = {} do
-	for _, widgetClassModule in pairs(pluginWidgetsModule) do
-		table.insert(activeWidgets, widgetClassModule)
+local ActiveButtonClasses = {}
+
+-- // Class // --
+local ButtonClass = {}
+ButtonClass.__index = ButtonClass
+
+function ButtonClass.New(widgetClass, buttonId, tooltip, icon_name , text : string?)
+	local pluginButton = pluginToolbar:CreateButton(buttonId, tooltip, icon_name, text)
+
+	widgetClass:Toggle(false)
+	pluginButton:SetActive(false)
+
+	local self = setmetatable({
+		widgetClass = widgetClass,
+
+		pluginButton = pluginButton,
+		clickEvent = pluginButton.Click,
+
+		_connections = MaidClass.New(),
+	}, ButtonClass)
+
+	self:OnClick(function()
+		self:Toggle()
+	end)
+
+	table.insert(ActiveButtonClasses, self)
+
+	return self
+end
+
+function ButtonClass:Toggle(enabled)
+	print('toggle ', enabled or (not self.widgetClass.Visible))
+	self.pluginButton:SetActive(false)
+	if self.widgetClass then
+		self.widgetClass:Toggle(enabled)
 	end
 end
 
-pluginMaid:Give(function()
-	pluginToolbarButton:SetActive(false)
-	for _, classModule in ipairs( activeWidgets ) do
-		classModule:Destroy()
-	end
-end)
+function ButtonClass:OnClick(...)
+	local connection = self.clickEvent:Connect(...)
+	self._connections:Give(connection)
+	return connection
+end
 
-pluginMaid:Give(pluginToolbarButton.Click:Connect(function()
-	pluginToolbarButton:SetActive(false)
-	pluginWidgetsModule.ParseScript:Toggle()
-end))
+function ButtonClass:Destroy()
+	-- cleanup click event
+	if self.clickEvent then
+		self.clickEvent:Disconnect()
+		self.clickEvent = nil
+	end
+	-- plugin button
+	if self.pluginButton then
+		self.pluginButton:Destroy()
+		self.pluginButton = nil
+	end
+	-- connections cleanup
+	if self._connections then
+		self._connections:Cleanup()
+		self._connections = nil
+	end
+end
+
+-- // Plugin // --
+local pluginMaid = MaidClass.New()
+
+pluginMaid:Give(function()
+	-- clear buttons
+	for _, buttonClass in ipairs( ActiveButtonClasses ) do
+		buttonClass:Destroy()
+	end
+	ActiveButtonClasses = nil
+end)
 
 pluginMaid:Give(plugin.Deactivation:Connect(function()
 	pluginMaid:Cleanup()
 end))
 
-plugin.Unloading:Connect(function()
+pluginMaid:Give(plugin.Unloading:Connect(function()
 	pluginMaid:Cleanup()
-end)
+end))
 
-pluginToolbarButton:SetActive(false)
-pluginWidgetsModule:Init(plugin)
+WidgetModule:Init(plugin)
+ButtonClass.New(WidgetModule.ParseScript, 'Parse Script', 'This widget is used to parse scripts.', 'rbxassetid://8939587672')
+ButtonClass.New(WidgetModule.FlowDiagram, 'Flow Diagram', 'This widget is used to hold diagrams', 'rbxassetid://8939587672')
 ]]></ProtectedString>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags"></BinaryString>
@@ -18405,29 +18575,28 @@ Module.DockWidget = false
 Module.plugin = false
 
 function Module:Show()
-	if Module.Visible then
-		return
-	end
-	Module.Visible = true
 	Module.DockWidget.Enabled = true
 	print(script.Name, 'Show')
 end
 
 function Module:Hide()
-	if not Module.Visible then
-		return
-	end
-	Module.Visible = false
 	Module.DockWidget.Enabled = false
 	print(script.Name, 'Hide')
 	self.WidgetMaid:Cleanup()
 end
 
-function Module:Toggle()
-	if Module.Visible then
-		Module:Hide()
+function Module:Toggle(forcedValue)
+	print(typeof(forcedValue))
+	if typeof(forcedValue) == 'boolean' then
+		Module.Visible = forcedValue
 	else
+		Module.Visible = not Module.Visible
+	end
+	print(Module.Visible)
+	if Module.Visible then
 		Module:Show()
+	else
+		Module:Hide()
 	end
 end
 
@@ -18499,29 +18668,28 @@ function Module:TokenParseSelections()
 end
 
 function Module:Show()
-	if Module.Visible then
-		return
-	end
-	Module.Visible = true
 	Module.DockWidget.Enabled = true
 	print(script.Name, 'Show')
 end
 
 function Module:Hide()
-	if not Module.Visible then
-		return
-	end
-	Module.Visible = false
 	Module.DockWidget.Enabled = false
 	print(script.Name, 'Hide')
 	self.WidgetMaid:Cleanup()
 end
 
-function Module:Toggle()
-	if Module.Visible then
-		Module:Hide()
+function Module:Toggle(forcedValue)
+	print(typeof(forcedValue))
+	if typeof(forcedValue) == 'boolean' then
+		Module.Visible = forcedValue
 	else
+		Module.Visible = not Module.Visible
+	end
+	print(Module.Visible)
+	if Module.Visible then
 		Module:Show()
+	else
+		Module:Hide()
 	end
 end
 
@@ -18615,29 +18783,28 @@ function Module:LoadNodeTrees( nodeTreeClassDictionary )
 end
 
 function Module:Show()
-	if Module.Visible then
-		return
-	end
-	Module.Visible = true
 	Module.DockWidget.Enabled = true
 	print(script.Name, 'Show')
 end
 
 function Module:Hide()
-	if not Module.Visible then
-		return
-	end
-	Module.Visible = false
 	Module.DockWidget.Enabled = false
 	print(script.Name, 'Hide')
 	self.WidgetMaid:Cleanup()
 end
 
-function Module:Toggle()
-	if Module.Visible then
-		Module:Hide()
+function Module:Toggle(forcedValue)
+	print(typeof(forcedValue))
+	if typeof(forcedValue) == 'boolean' then
+		Module.Visible = forcedValue
 	else
+		Module.Visible = not Module.Visible
+	end
+	print(Module.Visible)
+	if Module.Visible then
 		Module:Show()
+	else
+		Module:Hide()
 	end
 end
 
@@ -18659,6 +18826,7 @@ function Module:Init(otherSystems, plugin)
 	dockWidget.Title = script.Name
 	dockWidget.Enabled = false
 	Module.DockWidget = dockWidget
+
 end
 
 return Module

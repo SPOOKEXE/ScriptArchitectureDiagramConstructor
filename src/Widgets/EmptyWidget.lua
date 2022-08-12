@@ -13,29 +13,28 @@ Module.DockWidget = false
 Module.plugin = false
 
 function Module:Show()
-	if Module.Visible then
-		return
-	end
-	Module.Visible = true
 	Module.DockWidget.Enabled = true
 	print(script.Name, 'Show')
 end
 
 function Module:Hide()
-	if not Module.Visible then
-		return
-	end
-	Module.Visible = false
 	Module.DockWidget.Enabled = false
 	print(script.Name, 'Hide')
 	self.WidgetMaid:Cleanup()
 end
 
-function Module:Toggle()
-	if Module.Visible then
-		Module:Hide()
+function Module:Toggle(forcedValue)
+	print(typeof(forcedValue))
+	if typeof(forcedValue) == 'boolean' then
+		Module.Visible = forcedValue
 	else
+		Module.Visible = not Module.Visible
+	end
+	print(Module.Visible)
+	if Module.Visible then
 		Module:Show()
+	else
+		Module:Hide()
 	end
 end
 
