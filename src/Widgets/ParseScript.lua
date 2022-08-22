@@ -31,6 +31,21 @@ function Module:TokenParseSelections()
 	return parsedInfoArray
 end
 
+function Module:EnvClassParseTokens(parsedInfoArray, debugPrint)
+	for _, t in ipairs( parsedInfoArray ) do
+		local scriptPath, tokenDictionary = unpack(t)
+		local envParser = ScriptENVParser.New()
+		local _ = envParser:ParseTokens(tokenDictionary)
+		if debugPrint then
+			print(scriptPath)
+			envParser:OutputParse() -- DEBUG
+			print('\n\n\n')
+		end
+		table.insert(t, envParser)
+	end
+	return parsedInfoArray
+end
+
 function Module:Show()
 	Module.DockWidget.Enabled = true
 	print(script.Name, 'Show')
@@ -84,13 +99,12 @@ function Module:Init(otherSystems, plugin)
 	TriggerButton.TextScaled = true
 	TriggerButton.Activated:Connect(function()
 		local tokenScriptArray = Module:TokenParseSelections()
-		for _, t in ipairs( tokenScriptArray ) do
-			local _, tokenDictionary = unpack(t)
-			local envParser = ScriptENVParser.New()
-			local envTable = envParser:ParseTokens(tokenDictionary)
-			envParser:OutputParse()
-			table.insert(t, envParser)
-		end
+		
+		local nodeArray = SystemsContainer.FlowDiagram:ParseEnvArraysToNodes(tokenScriptArray)
+		SystemsContainer.FlowDiagram:LoadNodeTree(nodeArrays)
+		SystemsContainer.FlowDiagram:ClearActiveTrees()
+		SystemsContainer.FlowDiagram:LoadTreeClasses( nodeArrays )
+		-- { {fullScriptPath, tokenDictionary, envParser} }
 		-- local nodeTreeClass = Module:ConstructPerScriptNodeTrees(result)
 		-- SystemsContainer.FlowDiagram:LoadNodeTree( nodeTreeClass )
 	end)

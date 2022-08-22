@@ -1,6 +1,7 @@
 local PluginFolder = script.Parent.Parent
 local Modules = require(PluginFolder.Modules)
 
+local NodeTreeClassModule = Modules.Classes.NodeTree
 local MaidClass = Modules.Classes.Maid
 
 local SystemsContainer = {}
@@ -18,19 +19,60 @@ Module.SeparatorFrame = false
 Module.FlowChartFrame = false
 
 Module.ActiveTrees = {}
+Module.ActiveNodes = {}
 
-function Module:LoadTreeData( treeClass )
-	--[[
-		{
-			NodeTreeScript1Name = NodeTreeClass,
-			NodeTreeScript2Name = NodeTreeClass,
-		}
-	]]
-	print( treeClass )
+function Module:ParseEnvArraysToNodes(envParserArray)
+	-- { {fullScriptPath, tokenDictionary, envParser} }
+	local nodeArray = {}
+	for _, t in ipairs( envParserArray ) do
+		local scriptPath, tokenDictionary, envParser = unpack(t)
+
+		local nodesTable = {}
+
+		table.insert(nodeArray, {scriptPath, nodesTable})
+	end
+	return nodeArray
 end
 
-function Module:AppendTreeData( treeClass )
-	print('append ', treeClass)
+function Module:ClearActiveTrees()
+	-- clear the frames and stuff
+	Module.ActiveNodes = {}
+	Module.ActiveTrees = {}
+end
+
+function Module:LoadNodeArray( nodeArray )
+	local IDToNode = {}
+	local LayerZToNodeMap = {}
+	local NodesArray = {}
+
+	-- return IDToNode, LayerZToNodeMap, NodesArray
+	return IDToNode, LayerZToNodeMap, NodesArray
+end
+
+function Module:LoadNodeJSON( nodeJSONArray )
+	local IDToNode = {}
+	local LayerZToNodeMap = {}
+	local NodesArray = {}
+	for _, nodeData in ipairs( nodeJSONArray ) do
+		local layerZTable = LayerZToNodeMap[nodeData.Layer]
+		if not layerZTable then
+			layerZTable = {}
+			LayerZToNodeMap[nodeData.Layer] = layerZTable
+		end
+		if IDToNode[nodeData.ID] then
+			warn('Duplicate Node ; ', nodeData.ID)
+			continue
+		end
+		local newNodeClass = NodeTreeClassModule.BaseNode.New()
+		newNodeClass:SetLayer(nodeData.Layer)
+		for _, dependID in ipairs( nodeData.Depends ) do
+			table.insert(newNodeClass.depends, dependID)
+		end
+		table.insert(NodesArray, newNodeClass)
+		-- table.insert(Module.ActiveNodes, newNodeClass)
+		IDToNode[nodeData.ID] = newNodeClass
+	end
+	return IDToNode, LayerZToNodeMap, NodesArray
 end
 
 function Module:UpdateTabs()
@@ -133,6 +175,8 @@ function Module:Init(otherSystems, plugin)
 	FlowChartFrame.ZIndex = 0
 	FlowChartFrame.Parent = ContainerFrame
 	self.FlowChartFrame = FlowChartFrame
+
+	Module:ConstructFromNodeArray( Modules.Defined.TestDiagram )
 end
 
 return Module

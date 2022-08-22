@@ -81,27 +81,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>-12.3535852</X>
-					<Y>89.6038666</Y>
-					<Z>55.0127869</Z>
-					<R00>0.957173347</R00>
-					<R01>0.267163426</R01>
-					<R02>-0.111547589</R02>
+					<X>-27.1960087</X>
+					<Y>28.0214024</Y>
+					<Z>11.6861687</Z>
+					<R00>0.994277477</R00>
+					<R01>0.0522832461</R01>
+					<R02>-0.0931606367</R02>
 					<R10>-0</R10>
-					<R11>0.385290772</R11>
-					<R12>0.922795355</R12>
-					<R20>0.289515346</R20>
-					<R21>-0.883275092</R21>
-					<R22>0.36879006</R22>
+					<R11>0.872053623</R11>
+					<R12>0.48941046</R12>
+					<R20>0.106829032</R20>
+					<R21>-0.486609787</R21>
+					<R22>0.867063165</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>-12.1304903</X>
-					<Y>87.7582779</Y>
-					<Z>54.2752075</Z>
+					<X>-27.0096874</X>
+					<Y>27.0425816</Y>
+					<Z>9.95204258</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -10857,112 +10857,6 @@ return Class]]></ProtectedString>
 							<UniqueId name="UniqueId">310dd1710dcb8bab030416e9000307a2</UniqueId>
 						</Properties>
 					</Item>
-					<Item class="ModuleScript" referent="RBXA0B9304C2DDE4939A9E1A8485E7BB3AE">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">GuiClasses</string>
-							<string name="ScriptGuid">{D06DB958-2AFE-40CA-8979-D82A70B152CE}</string>
-							<ProtectedString name="Source"><![CDATA[local Module = {}
-
-for _, ModuleScript in ipairs( script:GetChildren() ) do
-	if ModuleScript:IsA('ModuleScript') then
-		Module[ModuleScript.Name] = require(ModuleScript)
-	end
-end
-
-return Module]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-							<UniqueId name="UniqueId">50250e3257db262a0307744500032827</UniqueId>
-						</Properties>
-						<Item class="ModuleScript" referent="RBX22C9F3CFF98443A2A84F1A1CECD75BEB">
-							<Properties>
-								<BinaryString name="AttributesSerialize"></BinaryString>
-								<Content name="LinkedSource"><null></null></Content>
-								<string name="Name">TabMenu</string>
-								<string name="ScriptGuid">{9E652550-35C4-4B00-A88F-768E4CD598C0}</string>
-								<ProtectedString name="Source"><![CDATA[
-local MaidClass = require(script.Parent.Parent.Maid)
-
-local function DetermineButton(ButtonFrame, customDeterminer) : GuiButton?
-	if customDeterminer then
-		return customDeterminer(ButtonFrame)
-	else
-		local ButtonInFrame = ButtonFrame:FindFirstChildWhichIsA('ImageButton')
-		if ButtonInFrame then
-			return ButtonInFrame
-		elseif ButtonFrame:IsA('ImageButton') then
-			return ButtonFrame
-		end
-	end
-	return nil
-end
-
--- // Module // --
-local Class = {}
-Class.__index =Class
-
-type determineFunc = (GuiObject?) -> (ImageButton?)
-function Class.New(ButtonParentFrame, FramesParent, determineButton : determineFunc?)
-
-	local MaidInstance = MaidClass.New()
-	local HashMap = {}
-
-	local self = setmetatable({
-		HashMap = HashMap,
-		Maid = MaidInstance,
-	}, Class)
-
-	self:Init(ButtonParentFrame, FramesParent, determineButton)
-
-	return self
-end
-
-function Class:ToggleFrame( TargetFrame, ForceEnabled )
-	for _, FrameObj in pairs(self.HashMap) do
-		if TargetFrame == FrameObj then
-			FrameObj.Visible = typeof(ForceEnabled) ~= 'boolean' and (not FrameObj.Visible) or ForceEnabled
-		else
-			FrameObj.Visible = false
-		end
-	end
-end
-
-function Class:Init(ButtonParentFrame : GuiObject, FramesParent : GuiObject, determineButton)
-	for index, ButtonObject in ipairs( ButtonParentFrame:GetChildren() ) do
-		local Button = DetermineButton(ButtonParentFrame, determineButton)
-		if not Button then
-			continue
-		end
-
-		local Frame = FramesParent:FindFirstChild(ButtonObject.Name)
-		if not Frame then
-			warn('Could not find matching frame ; ', ButtonObject.Name, ' in parent frame ; ', FramesParent:GetFullName())
-			continue
-		end
-
-		Frame.Visible = (index == 1)
-
-		self.HashMap[Frame] = Button
-		self.Maid:Give(Button.Activated:Connect(function()
-			self:ToggleFrame(Frame)
-		end))
-	end
-end
-
-function Class:Destroy()
-	self.Maid:Cleanup()
-end
-
-return Class
-]]></ProtectedString>
-								<int64 name="SourceAssetId">-1</int64>
-								<BinaryString name="Tags"></BinaryString>
-								<UniqueId name="UniqueId">50250e3257db262a0307744500032829</UniqueId>
-							</Properties>
-						</Item>
-					</Item>
 				</Item>
 				<Item class="ModuleScript" referent="RBX1A25227E26C4409E82877A44BE8FE981">
 					<Properties>
@@ -18460,7 +18354,7 @@ function ButtonClass.New(widgetClass, buttonId, tooltip, icon_name , text : stri
 end
 
 function ButtonClass:Toggle(enabled)
-	print('toggle ', enabled or (not self.widgetClass.Visible))
+	-- print('toggle ', enabled or (not self.widgetClass.Visible))
 	self.pluginButton:SetActive(false)
 	if self.widgetClass then
 		self.widgetClass:Toggle(enabled)
@@ -18679,13 +18573,11 @@ function Module:Hide()
 end
 
 function Module:Toggle(forcedValue)
-	print(typeof(forcedValue))
 	if typeof(forcedValue) == 'boolean' then
 		Module.Visible = forcedValue
 	else
 		Module.Visible = not Module.Visible
 	end
-	print(Module.Visible)
 	if Module.Visible then
 		Module:Show()
 	else
@@ -18760,31 +18652,51 @@ return Module
 						<string name="Name">FlowDiagram</string>
 						<string name="ScriptGuid">{E572E37E-5772-448E-8602-0F42C03C352B}</string>
 						<ProtectedString name="Source"><![CDATA[local PluginFolder = script.Parent.Parent
-local PluginModules = require(PluginFolder.Modules)
+local Modules = require(PluginFolder.Modules)
+
+local MaidClass = Modules.Classes.Maid
 
 local SystemsContainer = {}
 
 -- // Module // --
 local Module = {}
 
-Module.WidgetMaid = PluginModules.Classes.Maid.New()
 Module.Visible = false
-Module.DockWidget = false
 Module.plugin = false
 
-function Module:LoadNodeTrees( nodeTreeClassDictionary )
+Module.WidgetMaid = MaidClass.New()
+Module.DockWidget = false
+Module.ChartSelectFrame = false
+Module.SeparatorFrame = false
+Module.FlowChartFrame = false
+
+Module.ActiveTrees = {}
+
+function Module:LoadTreeData( treeClass )
 	--[[
 		{
 			NodeTreeScript1Name = NodeTreeClass,
 			NodeTreeScript2Name = NodeTreeClass,
 		}
 	]]
-	print( nodeTreeClassDictionary )
+	print( treeClass )
+end
+
+function Module:AppendTreeData( treeClass )
+	print('append ', treeClass)
+end
+
+function Module:UpdateTabs()
+	
 end
 
 function Module:Show()
 	Module.DockWidget.Enabled = true
 	print(script.Name, 'Show')
+	-- self.WidgetMaid:Give()
+	-- Module.ChartSelectFrame
+	-- Module.SeparatorFrame
+	-- Module.FlowChartFrame
 end
 
 function Module:Hide()
@@ -18794,13 +18706,11 @@ function Module:Hide()
 end
 
 function Module:Toggle(forcedValue)
-	print(typeof(forcedValue))
 	if typeof(forcedValue) == 'boolean' then
 		Module.Visible = forcedValue
 	else
 		Module.Visible = not Module.Visible
 	end
-	print(Module.Visible)
 	if Module.Visible then
 		Module:Show()
 	else
@@ -18827,6 +18737,55 @@ function Module:Init(otherSystems, plugin)
 	dockWidget.Enabled = false
 	Module.DockWidget = dockWidget
 
+	do
+		local BackgroundFrame = Instance.new('Frame')
+		BackgroundFrame.Name = 'BackgroundFrame'
+		BackgroundFrame.BorderSizePixel = 0
+		BackgroundFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+		BackgroundFrame.Size = UDim2.fromScale(1, 1)
+		BackgroundFrame.ZIndex = 0
+		BackgroundFrame.Parent = dockWidget
+	end
+
+	local ContainerFrame = Instance.new('Frame')
+	ContainerFrame.BackgroundTransparency = 1
+	ContainerFrame.Size = UDim2.fromScale(1, 1)
+	ContainerFrame.ZIndex = 1
+	ContainerFrame.Parent = dockWidget
+
+	local AspectRatio = Instance.new('UIAspectRatioConstraint')
+	AspectRatio.AspectRatio = 1
+	AspectRatio.AspectType = Enum.AspectType.ScaleWithParentSize
+	AspectRatio.Parent = ContainerFrame
+
+	local ChartSelectFrame = Instance.new('Frame')
+	ChartSelectFrame.Name = 'ChartSelectFrame'
+	ChartSelectFrame.BorderSizePixel = 0
+	ChartSelectFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+	ChartSelectFrame.Size = UDim2.fromScale(0.2, 1)
+	ChartSelectFrame.ZIndex = 0
+	ChartSelectFrame.Parent = ContainerFrame
+	self.ChartSelectFrame = ChartSelectFrame
+
+	local SeparatorFrame = Instance.new('Frame')
+	SeparatorFrame.Name = 'SeparatorFrame'
+	SeparatorFrame.BorderSizePixel = 0
+	SeparatorFrame.BackgroundColor3 = Color3.fromRGB(59, 59, 59)
+	SeparatorFrame.Size = UDim2.fromScale(0.05, 1)
+	SeparatorFrame.Position = UDim2.fromScale(0.2, 0)
+	SeparatorFrame.ZIndex = 0
+	SeparatorFrame.Parent = ContainerFrame
+	self.SeparatorFrame = SeparatorFrame
+
+	local FlowChartFrame = Instance.new('Frame')
+	FlowChartFrame.Name = 'FlowChartFrame'
+	FlowChartFrame.BorderSizePixel = 0
+	FlowChartFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+	FlowChartFrame.Size = UDim2.fromScale(0.795, 1)
+	FlowChartFrame.Position = UDim2.fromScale(0.205, 0)
+	FlowChartFrame.ZIndex = 0
+	FlowChartFrame.Parent = ContainerFrame
+	self.FlowChartFrame = FlowChartFrame
 end
 
 return Module
