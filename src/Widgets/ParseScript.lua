@@ -48,12 +48,12 @@ end
 
 function Module:Show()
 	Module.DockWidget.Enabled = true
-	print(script.Name, 'Show')
+	-- print(script.Name, 'Show')
 end
 
 function Module:Hide()
 	Module.DockWidget.Enabled = false
-	print(script.Name, 'Hide')
+	-- print(script.Name, 'Hide')
 	self.WidgetMaid:Cleanup()
 end
 

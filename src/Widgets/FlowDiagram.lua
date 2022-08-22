@@ -81,7 +81,7 @@ end
 
 function Module:Show()
 	Module.DockWidget.Enabled = true
-	print(script.Name, 'Show')
+	-- print(script.Name, 'Show')
 	-- self.WidgetMaid:Give()
 	-- Module.ChartSelectFrame
 	-- Module.SeparatorFrame
@@ -90,7 +90,7 @@ end
 
 function Module:Hide()
 	Module.DockWidget.Enabled = false
-	print(script.Name, 'Hide')
+	-- print(script.Name, 'Hide')
 	self.WidgetMaid:Cleanup()
 end
 
@@ -176,7 +176,7 @@ function Module:Init(otherSystems, plugin)
 	FlowChartFrame.Parent = ContainerFrame
 	self.FlowChartFrame = FlowChartFrame
 
-	Module:ConstructFromNodeArray( Modules.Defined.TestDiagram )
+	Module:LoadNodeJSON( Modules.Defined.TestDiagram )
 end
 
 return Module

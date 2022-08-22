@@ -18,6 +18,7 @@ function BaseNode.New()
 		y = 0,
 		layerZ = 0, -- what column they are in
 		radius = 35,
+		depends = {},
 	}, BaseNode)
 end
 

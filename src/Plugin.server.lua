@@ -1,6 +1,6 @@
 
 local pluginToolbar = plugin:CreateToolbar("Script Architecture Diagram")
-local pluginScriptParseButton = pluginToolbar:CreateButton("Open Widget", "Open The Widget", "Open Button", "rbxassetid://8939587672")
+local pluginScriptParseButton = pluginToolbar:CreateButton("Open Widget", "Open The Widget", "Open Button", "8939587672")
 
 local pluginFolder = script.Parent
 local Modules = require(pluginFolder:WaitForChild('Modules'))
