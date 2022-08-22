@@ -81,27 +81,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>-9.51527309</X>
-					<Y>34.7176552</Y>
-					<Z>-5.66459703</Z>
-					<R00>-0.15891768</R00>
-					<R01>0.756336153</R01>
-					<R02>-0.634587348</R02>
+					<X>24.2458248</X>
+					<Y>87.8930054</Y>
+					<Z>4.88661098</Z>
+					<R00>-0</R00>
+					<R01>-0.754354775</R01>
+					<R02>0.656466961</R02>
 					<R10>-0</R10>
-					<R11>0.642755628</R11>
-					<R12>0.766071439</R12>
-					<R20>0.987291932</R20>
-					<R21>0.121742293</R21>
-					<R22>-0.10214521</R22>
+					<R11>0.656466961</R11>
+					<R12>0.754354775</R12>
+					<R20>-1</R20>
+					<R21>0</R21>
+					<R22>-0</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>-8.24609852</X>
-					<Y>33.1855125</Y>
-					<Z>-5.46030664</Z>
+					<X>22.932888</X>
+					<Y>86.3842926</Y>
+					<Z>4.88661098</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -10569,39 +10569,21 @@ local function setProperties(thisTable, toThis)
 	return toThis
 end
 
--- // BASE NODE // --
-local BaseNode = {}
-BaseNode.__index = BaseNode
+-- // NODE // --
+local Node = {}
+Node.__index = Node
 
-function BaseNode.New()
+function Node.New(nodeID)
 	return setmetatable({
 		x = 0,
 		y = 0,
 		layerZ = 0, -- what column they are in
 		radius = 35,
-		depends = {},
-	}, BaseNode)
-end
 
-function BaseNode:SetPosition(nX : number, nY : number)
-	self.x = nX
-	self.y = nY
-end
-
-function BaseNode:SetLayer(nLayer : number)
-	self.layerZ = nLayer
-end
-
--- // NODE // --
-local Node = BaseNode.New()
-Node.__index = Node
-
-function Node.New(nodeID)
-	return setmetatable(setProperties({
 		ID = nodeID or HttpService:GenerateGUID(false),
 		depends = {},
 		orderNumber = 0, -- set automatically to make room for lines
-	}, BaseNode.New()), Node)
+	}, Node)
 end
 
 function Node:LoadDepends(dependsTable)
@@ -10610,19 +10592,29 @@ function Node:LoadDepends(dependsTable)
 	end
 end
 
+function Node:SetPosition(nX : number, nY : number)
+	self.x = nX
+	self.y = nY
+end
+
+function Node:SetLayer(nLayer : number)
+	self.layerZ = nLayer
+end
+
 -- // TREE CLASS // --
 local TreeData = {}
 TreeData.__index = TreeData
 
 function TreeData.New()
 	return setmetatable({
+		name = "Unknown",
 		visible = false,
 		nodes = {},
 		IDToNode = {},
 		LayerZToNodeArray = {},
 
 		widthSeparation = 100,
-		windowHeight = 800
+		windowHeight = 500,
 	}, TreeData)
 end
 
@@ -10632,6 +10624,10 @@ end
 		{ ID = 'blah', Depends = {'blah2'}, Layer = 2 },
 	}
 ]]
+
+function TreeData:GetNodeFromID(nodeID)
+	return self.IDToNode[nodeID]
+end
 
 function TreeData:LoadNodes( nodesTable )
 	-- add all nodes
@@ -10645,14 +10641,13 @@ function TreeData:LoadNodes( nodesTable )
 		local newNode = Node.New(nodeData.ID)
 		newNode:SetLayer(nodeData.Layer)
 		newNode:LoadDepends( nodeData.Depends )
-
 		table.insert(self.nodes, newNode) -- array
 		self.IDToNode[nodeData.ID] = newNode -- hashmap
 		table.insert(layerZArray, newNode) -- layer array
 	end
 
 	-- check duplicate dependancies (recursive)
-	for layerNumber, layerNodes in pairs(self.layerZArray) do
+	for layerNumber, layerNodes in pairs(self.LayerZToNodeArray) do
 		local layerCount = #layerNodes
 		local deltaCount = (1 / layerCount);
 		local deltaStep = (self.windowHeight * 0.5) * deltaCount;
@@ -10660,7 +10655,7 @@ function TreeData:LoadNodes( nodesTable )
 		for nodeIndex, node in ipairs( layerNodes ) do
 			local nodeY = topHeight + (deltaStep * nodeIndex)
 			local nodeX = layerNumber * self.widthSeparation
-			node.setPosition( nodeX, nodeY );
+			node:SetPosition( nodeX, nodeY );
 		end
 	end
 end
@@ -10674,16 +10669,16 @@ end
 			for (int i = 0; i < nodes.length; i++) {
 				Node baseNode = nodes[i];
 				for (String dependID : baseNode.depends) {
-				Node dependedNode = IDToNode.get(dependID);
-				// If node is null, then the depended node is not within this tree.
-				if (dependedNode == null) {
-					printOnce("[WARN] Depended ID has no node in the tree! " + baseNode.ID + " depending on " + dependID);
-					continue;
-				}
-				// Create line to link the dependant ones
-				noFill();
-				bezierLine( baseNode.x, baseNode.y, dependedNode.x, dependedNode.y, widthSeparation);
-				fill(255);
+					Node dependedNode = IDToNode.get(dependID);
+					// If node is null, then the depended node is not within this tree.
+					if (dependedNode == null) {
+						printOnce("[WARN] Depended ID has no node in the tree! " + baseNode.ID + " depending on " + dependID);
+						continue;
+					}
+					// Create line to link the dependant ones
+					noFill();
+					bezierLine( baseNode.x, baseNode.y, dependedNode.x, dependedNode.y, widthSeparation);
+					fill(255);
 				}
 			}
 			// Show nodes
@@ -10694,7 +10689,7 @@ end
 	end
 ]]
 
-return { BaseNode = BaseNode, Node = Node, TreeData = TreeData }
+return { Node = Node, TreeData = TreeData }
 ]]></ProtectedString>
 							<int64 name="SourceAssetId">-1</int64>
 							<BinaryString name="Tags"></BinaryString>
@@ -18601,6 +18596,7 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo)
 	dockWidget.Title = script.Name
+	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
 	Module.DockWidget = dockWidget
 end
@@ -18707,6 +18703,7 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo)
 	dockWidget.Title = script.Name
+	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
 
 	local TriggerButton = Instance.new('TextButton')
@@ -18756,13 +18753,104 @@ return Module
 						<Content name="LinkedSource"><null></null></Content>
 						<string name="Name">FlowDiagram</string>
 						<string name="ScriptGuid">{E572E37E-5772-448E-8602-0F42C03C352B}</string>
-						<ProtectedString name="Source"><![CDATA[local PluginFolder = script.Parent.Parent
+						<ProtectedString name="Source"><![CDATA[local TweenService = game:GetService('TweenService')
+
+local PluginFolder = script.Parent.Parent
 local Modules = require(PluginFolder.Modules)
 
 local NodeTreeClassModule = Modules.Classes.NodeTree
 local MaidClass = Modules.Classes.Maid
 
 local SystemsContainer = {}
+
+local baseTreeSelectButton = Instance.new('TextButton') do
+	baseTreeSelectButton.Name = 'TreeDataSelectButton'
+	baseTreeSelectButton.TextColor3 = Color3.new(0.4, 0.4, 0.4)
+	baseTreeSelectButton.BackgroundColor3 = Color3.fromRGB(93, 93, 93)
+	baseTreeSelectButton.BackgroundTransparency = 0.8
+	baseTreeSelectButton.BorderSizePixel = 0
+	local uiScaleInstance = Instance.new('UIScale')
+	uiScaleInstance.Scale = 1
+	uiScaleInstance.Parent = baseTreeSelectButton
+end
+
+local baseFlowChartContainerFrame = Instance.new('Frame') do
+	baseFlowChartContainerFrame.BackgroundTransparency = 1
+	baseFlowChartContainerFrame.Size = UDim2.fromScale(0.975, 0.975)
+	baseFlowChartContainerFrame.Position = UDim2.fromScale(0.5, 0.5)
+	baseFlowChartContainerFrame.BorderSizePixel = 0
+	baseFlowChartContainerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+end
+
+local baseFlowChartNodeFrame = Instance.new('Frame') do
+	baseFlowChartNodeFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	baseFlowChartNodeFrame.BackgroundTransparency = 0.6
+	baseFlowChartNodeFrame.Size = UDim2.fromOffset(40, 40)
+	baseFlowChartNodeFrame.BorderSizePixel = 0
+	local uiCorner = Instance.new('UICorner')
+	uiCorner.CornerRadius = UDim.new(0.5, 0)
+	uiCorner.Parent = baseFlowChartNodeFrame
+end
+
+local baseLineFrame = Instance.new('Frame')
+baseLineFrame.BackgroundTransparency = 0
+baseLineFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+baseLineFrame.BorderSizePixel = 0
+baseLineFrame.ZIndex = -1
+local function line(p1, p2)
+	local dir = (p2 - p1)
+	local length = dir.Magnitude
+	local newFrame = baseLineFrame:Clone()
+	newFrame.Rotation = math.deg( math.atan2(dir.y, dir.x) )
+	newFrame.Size = UDim2.fromOffset(length, 2)
+	newFrame.Position = UDim2.fromOffset(p1.x - length, p1.y)
+	return newFrame
+end
+
+-- https://javascript.info/bezier-curve
+local function getCubicBezier(p1, p2, p3, p4, alpha)
+	return
+		math.pow( 1 - alpha, 3 ) * p1 +
+		3 * math.pow(1 - alpha, 2) * alpha * p2 +
+		3 * (1 - alpha) * math.pow(alpha, 2) * p3 +
+		math.pow(alpha, 3) * p4
+end
+
+local bezierResolution = 2 -- frame/pixels
+local function bezier(p1, p2, p3, p4)
+	local bezierFrames = {}
+	local totalSteps = math.floor((p4 - p1).Magnitude / bezierResolution)
+	local delta = (1 / totalSteps)
+	for step = 1, totalSteps do
+		local v = (step * delta)
+		local vectorA = getCubicBezier(p1, p2, p3, p4, v - delta)
+		local vectorB = getCubicBezier(p1, p2, p3, p4, v + delta)
+		table.insert(bezierFrames, line(vectorA, vectorB))
+	end
+	return bezierFrames
+end
+
+local function UIBezierLine(p1, p2, parentFrame)
+	local wasCreated = false
+	local hashValue = Modules.Utility.Hashlib.sha256(tostring(p1)..tostring(p2))
+	local bezierFolderInstance = parentFrame:FindFirstChild(hashValue)
+	if not bezierFolderInstance then
+		bezierFolderInstance = Instance.new('Folder')
+		bezierFolderInstance.Name = hashValue
+		bezierFolderInstance.Parent = parentFrame
+		if (p1.x == p2.x) or (p1.y == p2.y) then
+			line(p1, p2).Parent = bezierFolderInstance
+		else
+			local dir = (p1 - p2)
+			local lineSegments = bezier(p1, Vector2.new(p1.x - (dir.x * 0.375), p1.y), Vector2.new(p2.x + (dir.x * 0.375), p2.y), p2 )
+			for _, segment in ipairs( lineSegments ) do
+				segment.Parent = bezierFolderInstance
+			end
+		end
+		wasCreated = true
+	end
+	return bezierFolderInstance, wasCreated
+end
 
 -- // Module // --
 local Module = {}
@@ -18772,76 +18860,137 @@ Module.plugin = false
 
 Module.WidgetMaid = MaidClass.New()
 Module.DockWidget = false
-Module.ChartSelectFrame = false
+Module.TreeSelectFrame = false
 Module.SeparatorFrame = false
 Module.FlowChartFrame = false
 
 Module.ActiveTrees = {}
-Module.ActiveNodes = {}
+Module.ButtonToTreeFrame = {}
 
 function Module:ParseEnvArraysToNodes(envParserArray)
 	-- { {fullScriptPath, tokenDictionary, envParser} }
 	local nodeArray = {}
 	for _, t in ipairs( envParserArray ) do
 		local scriptPath, tokenDictionary, envParser = unpack(t)
-
 		local nodesTable = {}
-
 		table.insert(nodeArray, {scriptPath, nodesTable})
 	end
 	return nodeArray
 end
 
-function Module:ClearActiveTrees()
-	-- clear the frames and stuff
-	Module.ActiveNodes = {}
-	Module.ActiveTrees = {}
+function Module:GetNodeFrame(nodeClass, FlowChartFrame)
+	local Frame = FlowChartFrame:FindFirstChild(nodeClass.ID)
+	if not Frame then
+		Frame = baseFlowChartNodeFrame:Clone()
+		Frame.Position = UDim2.fromOffset(nodeClass.x, nodeClass.y)
+		Frame.Parent = FlowChartFrame
+	end
+	return Frame
+end
+
+function Module:UpdateFramesInFlowChart( baseTreeClass, FlowChartFrame )
+	print(FlowChartFrame:GetFullName(), baseTreeClass)
+
+	for _, nodeClass in ipairs( baseTreeClass.nodes ) do
+		for _, dependID in ipairs( nodeClass.depends ) do
+			local dependantNodeClass = baseTreeClass:GetNodeFromID(dependID)
+			UIBezierLine(
+				Vector2.new(nodeClass.x, nodeClass.y),
+				Vector2.new(dependantNodeClass.x, dependantNodeClass.y),
+				FlowChartFrame
+			)
+		end
+	end
+
+	for _, nodeClass in ipairs( baseTreeClass.nodes ) do
+		Module:GetNodeFrame(nodeClass, FlowChartFrame)
+	end
+end
+
+function Module:GetFlowChartFrame(baseTreeClass)
+	local targetFrame = Module.FlowChartFrame:FindFirstChild(baseTreeClass.name)
+	if not targetFrame then
+		targetFrame = baseFlowChartContainerFrame:Clone()
+		targetFrame.Name = baseTreeClass.name
+		targetFrame.Parent = Module.FlowChartFrame
+	end
+	return targetFrame
+end
+
+function Module:ToggleFrame(targetFrame)
+	for ButtonFrame, FlowFrame in pairs(Module.ButtonToTreeFrame) do
+		local IsVisible = (FlowFrame == targetFrame) and (not FlowFrame.Visible) or false
+		FlowFrame.Visible = IsVisible
+		ButtonFrame.TextColor3 = IsVisible and Color3.new(1, 1, 1) or Color3.new(0.4, 0.4, 0.4)
+	end
+end
+
+function Module:GetCategorySelectButton(baseTreeClass, targetFrame)
+	local categoryButton = Module.TreeSelectFrame:FindFirstChild(baseTreeClass.name)
+	if not categoryButton then
+		categoryButton = baseTreeSelectButton:Clone()
+		categoryButton.Name = baseTreeClass.name
+		categoryButton.MouseEnter:Connect(function()
+			TweenService:Create(categoryButton.UIScale, TweenInfo.new(0.25), {Scale = 1.05}):Play()
+		end)
+		categoryButton.MouseLeave:Connect(function()
+			TweenService:Create(categoryButton.UIScale, TweenInfo.new(0.25), {Scale = 1}):Play()
+		end)
+		categoryButton.Activated:Connect(function()
+			Module:ToggleFrame(targetFrame)
+		end)
+		categoryButton.Parent = Module.TreeSelectFrame
+	end
+	categoryButton.LayoutOrder = #baseTreeClass.nodes
+	return categoryButton
+end
+
+function Module:UpdateFrames()
+	for _, baseTreeClass in ipairs( Module.ActiveTrees ) do
+		if not baseTreeClass.visible then
+			continue
+		end
+		local TreeFrame = Module:GetFlowChartFrame(baseTreeClass)
+		local TreeButton = Module:GetCategorySelectButton(baseTreeClass, TreeFrame)
+		if TreeButton then
+			Module:UpdateFramesInFlowChart(baseTreeClass, TreeFrame)
+			Module.ButtonToTreeFrame[TreeButton] = TreeFrame
+		end
+	end
 end
 
 function Module:LoadNodeArray( nodeArray )
-	local IDToNode = {}
-	local LayerZToNodeMap = {}
-	local NodesArray = {}
-
+	local baseTreeClass = NodeTreeClassModule.TreeData.New()
+	-- baseTreeClass.IDToNode
+	-- baseTreeClass.LayerZToNodeMap
+	-- baseTreeClass.nodes
 	-- return IDToNode, LayerZToNodeMap, NodesArray
-	return IDToNode, LayerZToNodeMap, NodesArray
+	return baseTreeClass
 end
 
 function Module:LoadNodeJSON( nodeJSONArray )
-	local IDToNode = {}
-	local LayerZToNodeMap = {}
-	local NodesArray = {}
-	for _, nodeData in ipairs( nodeJSONArray ) do
-		local layerZTable = LayerZToNodeMap[nodeData.Layer]
-		if not layerZTable then
-			layerZTable = {}
-			LayerZToNodeMap[nodeData.Layer] = layerZTable
-		end
-		if IDToNode[nodeData.ID] then
-			warn('Duplicate Node ; ', nodeData.ID)
-			continue
-		end
-		local newNodeClass = NodeTreeClassModule.BaseNode.New()
-		newNodeClass:SetLayer(nodeData.Layer)
-		for _, dependID in ipairs( nodeData.Depends ) do
-			table.insert(newNodeClass.depends, dependID)
-		end
-		table.insert(NodesArray, newNodeClass)
-		-- table.insert(Module.ActiveNodes, newNodeClass)
-		IDToNode[nodeData.ID] = newNodeClass
-	end
-	return IDToNode, LayerZToNodeMap, NodesArray
+	local baseTreeClass = NodeTreeClassModule.TreeData.New()
+	baseTreeClass:LoadNodes( nodeJSONArray )
+	baseTreeClass.visible = true
+	return baseTreeClass
 end
 
 function Module:UpdateTabs()
-	
+	-- change tab highlights / visibility and stuff
+	for TreeButton, TreeFrame in pairs(Module.ButtonToTreeFrame) do
+		if not TreeFrame:IsDescendantOf(Module.FlowChartFrame) then
+			TreeButton:Destroy()
+		end
+	end
+	-- update the frames
+	Module:UpdateFrames()
 end
 
 function Module:Show()
 	Module.DockWidget.Enabled = true
 	-- print(script.Name, 'Show')
 	-- self.WidgetMaid:Give()
-	-- Module.ChartSelectFrame
+	-- Module.TreeSelectFrame
 	-- Module.SeparatorFrame
 	-- Module.FlowChartFrame
 end
@@ -18876,11 +19025,12 @@ function Module:Init(otherSystems, plugin)
 	local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 		Enum.InitialDockState.Float,
 		false, true,
-		800, 800, 200, 200
+		600, 400, 600, 400
 	)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo) :: DockWidgetPluginGui
 	dockWidget.Title = script.Name
+	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
 	Module.DockWidget = dockWidget
 
@@ -18895,24 +19045,20 @@ function Module:Init(otherSystems, plugin)
 	end
 
 	local ContainerFrame = Instance.new('Frame')
+	ContainerFrame.Name = 'ContainerFrame'
 	ContainerFrame.BackgroundTransparency = 1
 	ContainerFrame.Size = UDim2.fromScale(1, 1)
 	ContainerFrame.ZIndex = 1
 	ContainerFrame.Parent = dockWidget
 
-	local AspectRatio = Instance.new('UIAspectRatioConstraint')
-	AspectRatio.AspectRatio = 1
-	AspectRatio.AspectType = Enum.AspectType.ScaleWithParentSize
-	AspectRatio.Parent = ContainerFrame
-
-	local ChartSelectFrame = Instance.new('Frame')
-	ChartSelectFrame.Name = 'ChartSelectFrame'
-	ChartSelectFrame.BorderSizePixel = 0
-	ChartSelectFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
-	ChartSelectFrame.Size = UDim2.fromScale(0.2, 1)
-	ChartSelectFrame.ZIndex = 0
-	ChartSelectFrame.Parent = ContainerFrame
-	self.ChartSelectFrame = ChartSelectFrame
+	local TreeSelectFrame = Instance.new('Frame')
+	TreeSelectFrame.Name = 'TreeSelectFrame'
+	TreeSelectFrame.BorderSizePixel = 0
+	TreeSelectFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+	TreeSelectFrame.Size = UDim2.fromScale(0.2, 1)
+	TreeSelectFrame.ZIndex = 0
+	TreeSelectFrame.Parent = ContainerFrame
+	self.TreeSelectFrame = TreeSelectFrame
 
 	local SeparatorFrame = Instance.new('Frame')
 	SeparatorFrame.Name = 'SeparatorFrame'
@@ -18934,7 +19080,25 @@ function Module:Init(otherSystems, plugin)
 	FlowChartFrame.Parent = ContainerFrame
 	self.FlowChartFrame = FlowChartFrame
 
-	Module:LoadNodeJSON( Modules.Defined.TestDiagram )
+	local TreeSelectGridLayout  = Instance.new('UIGridLayout')
+	TreeSelectGridLayout.CellPadding = UDim2.fromScale(0, 0.01)
+	TreeSelectGridLayout.CellSize = UDim2.fromScale(1, 0.1)
+	TreeSelectGridLayout.Parent = TreeSelectFrame
+	local TreeSelectAspectRatio = Instance.new('UIAspectRatioConstraint')
+	TreeSelectAspectRatio.AspectRatio = 3.5
+	TreeSelectAspectRatio.AspectType = Enum.AspectType.ScaleWithParentSize
+	TreeSelectAspectRatio.Parent = TreeSelectGridLayout
+	local TreeSelectUIPadding = Instance.new('UIPadding')
+	TreeSelectUIPadding.PaddingTop = UDim.new(0.01, 0)
+	TreeSelectUIPadding.PaddingLeft = UDim.new(0.02, 0)
+	TreeSelectUIPadding.PaddingRight = UDim.new(0.02, 0)
+	TreeSelectUIPadding.Parent = TreeSelectFrame
+
+	local treeClass = Module:LoadNodeJSON( Modules.Defined.TestDiagram )
+	table.insert(Module.ActiveTrees, treeClass)
+	Module:UpdateTabs()
+
+	Module:Toggle(true)
 end
 
 return Module
@@ -21037,6 +21201,675 @@ return Module]]></ProtectedString>
 						<UniqueId name="UniqueId">310dd1710dcb8bab030416e90003079a</UniqueId>
 					</Properties>
 				</Item>
+			</Item>
+		</Item>
+		<Item class="Frame" referent="RBX4672BC21443141EBB02F07D6D6468D33">
+			<Properties>
+				<bool name="Active">false</bool>
+				<Vector2 name="AnchorPoint">
+					<X>0</X>
+					<Y>0</Y>
+				</Vector2>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<bool name="AutoLocalize">true</bool>
+				<token name="AutomaticSize">0</token>
+				<Color3 name="BackgroundColor3">
+					<R>0.639215708</R>
+					<G>0.635294139</G>
+					<B>0.647058845</B>
+				</Color3>
+				<float name="BackgroundTransparency">1</float>
+				<Color3 name="BorderColor3">
+					<R>0.105882362</R>
+					<G>0.164705887</G>
+					<B>0.207843155</B>
+				</Color3>
+				<token name="BorderMode">0</token>
+				<int name="BorderSizePixel">1</int>
+				<bool name="ClipsDescendants">false</bool>
+				<bool name="Draggable">false</bool>
+				<int name="LayoutOrder">0</int>
+				<string name="Name">Frame</string>
+				<Ref name="NextSelectionDown">null</Ref>
+				<Ref name="NextSelectionLeft">null</Ref>
+				<Ref name="NextSelectionRight">null</Ref>
+				<Ref name="NextSelectionUp">null</Ref>
+				<UDim2 name="Position">
+					<XS>0</XS>
+					<XO>0</XO>
+					<YS>0</YS>
+					<YO>0</YO>
+				</UDim2>
+				<Ref name="RootLocalizationTable">null</Ref>
+				<float name="Rotation">0</float>
+				<bool name="Selectable">false</bool>
+				<token name="SelectionBehaviorDown">0</token>
+				<token name="SelectionBehaviorLeft">0</token>
+				<token name="SelectionBehaviorRight">0</token>
+				<token name="SelectionBehaviorUp">0</token>
+				<bool name="SelectionGroup">false</bool>
+				<Ref name="SelectionImageObject">null</Ref>
+				<int name="SelectionOrder">0</int>
+				<UDim2 name="Size">
+					<XS>1</XS>
+					<XO>0</XO>
+					<YS>1</YS>
+					<YO>0</YO>
+				</UDim2>
+				<token name="SizeConstraint">0</token>
+				<int64 name="SourceAssetId">-1</int64>
+				<token name="Style">0</token>
+				<BinaryString name="Tags"></BinaryString>
+				<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811ec</UniqueId>
+				<bool name="Visible">true</bool>
+				<int name="ZIndex">1</int>
+			</Properties>
+			<Item class="Frame" referent="RBXCDD93FA0CF1B4B8FA4F77FCBC6E858A4">
+				<Properties>
+					<bool name="Active">false</bool>
+					<Vector2 name="AnchorPoint">
+						<X>0</X>
+						<Y>0</Y>
+					</Vector2>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<bool name="AutoLocalize">true</bool>
+					<token name="AutomaticSize">0</token>
+					<Color3 name="BackgroundColor3">
+						<R>0.168627456</R>
+						<G>0.168627456</G>
+						<B>0.168627456</B>
+					</Color3>
+					<float name="BackgroundTransparency">0</float>
+					<Color3 name="BorderColor3">
+						<R>0.105882362</R>
+						<G>0.164705887</G>
+						<B>0.207843155</B>
+					</Color3>
+					<token name="BorderMode">0</token>
+					<int name="BorderSizePixel">0</int>
+					<bool name="ClipsDescendants">false</bool>
+					<bool name="Draggable">false</bool>
+					<int name="LayoutOrder">0</int>
+					<string name="Name">ChartSelectFrame</string>
+					<Ref name="NextSelectionDown">null</Ref>
+					<Ref name="NextSelectionLeft">null</Ref>
+					<Ref name="NextSelectionRight">null</Ref>
+					<Ref name="NextSelectionUp">null</Ref>
+					<UDim2 name="Position">
+						<XS>0</XS>
+						<XO>0</XO>
+						<YS>0</YS>
+						<YO>0</YO>
+					</UDim2>
+					<Ref name="RootLocalizationTable">null</Ref>
+					<float name="Rotation">0</float>
+					<bool name="Selectable">false</bool>
+					<token name="SelectionBehaviorDown">0</token>
+					<token name="SelectionBehaviorLeft">0</token>
+					<token name="SelectionBehaviorRight">0</token>
+					<token name="SelectionBehaviorUp">0</token>
+					<bool name="SelectionGroup">false</bool>
+					<Ref name="SelectionImageObject">null</Ref>
+					<int name="SelectionOrder">0</int>
+					<UDim2 name="Size">
+						<XS>0.200000003</XS>
+						<XO>0</XO>
+						<YS>1</YS>
+						<YO>0</YO>
+					</UDim2>
+					<token name="SizeConstraint">0</token>
+					<int64 name="SourceAssetId">-1</int64>
+					<token name="Style">0</token>
+					<BinaryString name="Tags"></BinaryString>
+					<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811ed</UniqueId>
+					<bool name="Visible">true</bool>
+					<int name="ZIndex">0</int>
+				</Properties>
+				<Item class="TextButton" referent="RBX23714F123D7A43C3AE171DCF4C0E1BFB">
+					<Properties>
+						<bool name="Active">true</bool>
+						<Vector2 name="AnchorPoint">
+							<X>0</X>
+							<Y>0</Y>
+						</Vector2>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<bool name="AutoButtonColor">true</bool>
+						<bool name="AutoLocalize">true</bool>
+						<token name="AutomaticSize">0</token>
+						<Color3 name="BackgroundColor3">
+							<R>0.36470589</R>
+							<G>0.36470589</G>
+							<B>0.36470589</B>
+						</Color3>
+						<float name="BackgroundTransparency">0.800000012</float>
+						<Color3 name="BorderColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<token name="BorderMode">0</token>
+						<int name="BorderSizePixel">0</int>
+						<bool name="ClipsDescendants">false</bool>
+						<bool name="Draggable">false</bool>
+						<token name="Font">4</token>
+						<Font name="FontFace">
+							<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+							<Weight>700</Weight>
+							<Style>Normal</Style>
+							<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Bold.ttf</url></CachedFaceId>
+						</Font>
+						<int name="LayoutOrder">0</int>
+						<float name="LineHeight">1</float>
+						<int name="MaxVisibleGraphemes">-1</int>
+						<bool name="Modal">false</bool>
+						<string name="Name">Button</string>
+						<Ref name="NextSelectionDown">null</Ref>
+						<Ref name="NextSelectionLeft">null</Ref>
+						<Ref name="NextSelectionRight">null</Ref>
+						<Ref name="NextSelectionUp">null</Ref>
+						<UDim2 name="Position">
+							<XS>0</XS>
+							<XO>0</XO>
+							<YS>0</YS>
+							<YO>0</YO>
+						</UDim2>
+						<bool name="RichText">false</bool>
+						<Ref name="RootLocalizationTable">null</Ref>
+						<float name="Rotation">0</float>
+						<bool name="Selectable">true</bool>
+						<bool name="Selected">false</bool>
+						<token name="SelectionBehaviorDown">0</token>
+						<token name="SelectionBehaviorLeft">0</token>
+						<token name="SelectionBehaviorRight">0</token>
+						<token name="SelectionBehaviorUp">0</token>
+						<bool name="SelectionGroup">false</bool>
+						<Ref name="SelectionImageObject">null</Ref>
+						<int name="SelectionOrder">0</int>
+						<UDim2 name="Size">
+							<XS>0</XS>
+							<XO>200</XO>
+							<YS>0</YS>
+							<YO>50</YO>
+						</UDim2>
+						<token name="SizeConstraint">0</token>
+						<int64 name="SourceAssetId">-1</int64>
+						<token name="Style">0</token>
+						<BinaryString name="Tags"></BinaryString>
+						<string name="Text">Tree Node</string>
+						<Color3 name="TextColor3">
+							<R>1</R>
+							<G>1</G>
+							<B>1</B>
+						</Color3>
+						<bool name="TextScaled">true</bool>
+						<float name="TextSize">14</float>
+						<Color3 name="TextStrokeColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<float name="TextStrokeTransparency">1</float>
+						<float name="TextTransparency">0</float>
+						<token name="TextTruncate">0</token>
+						<bool name="TextWrapped">true</bool>
+						<token name="TextXAlignment">2</token>
+						<token name="TextYAlignment">1</token>
+						<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f0</UniqueId>
+						<bool name="Visible">true</bool>
+						<int name="ZIndex">1</int>
+					</Properties>
+					<Item class="UIPadding" referent="RBX9C4B7B52C7214C7590EFBA471D9B9CFD">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<string name="Name">UIPadding</string>
+							<UDim name="PaddingBottom">
+								<S>0.100000001</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingLeft">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingRight">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingTop">
+								<S>0.100000001</S>
+								<O>0</O>
+							</UDim>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f5</UniqueId>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="TextButton" referent="RBX8934C2F202BA457CA9EC62F1B984E116">
+					<Properties>
+						<bool name="Active">true</bool>
+						<Vector2 name="AnchorPoint">
+							<X>0</X>
+							<Y>0</Y>
+						</Vector2>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<bool name="AutoButtonColor">true</bool>
+						<bool name="AutoLocalize">true</bool>
+						<token name="AutomaticSize">0</token>
+						<Color3 name="BackgroundColor3">
+							<R>0.36470589</R>
+							<G>0.36470589</G>
+							<B>0.36470589</B>
+						</Color3>
+						<float name="BackgroundTransparency">0.800000012</float>
+						<Color3 name="BorderColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<token name="BorderMode">0</token>
+						<int name="BorderSizePixel">0</int>
+						<bool name="ClipsDescendants">false</bool>
+						<bool name="Draggable">false</bool>
+						<token name="Font">4</token>
+						<Font name="FontFace">
+							<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+							<Weight>700</Weight>
+							<Style>Normal</Style>
+							<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Bold.ttf</url></CachedFaceId>
+						</Font>
+						<int name="LayoutOrder">0</int>
+						<float name="LineHeight">1</float>
+						<int name="MaxVisibleGraphemes">-1</int>
+						<bool name="Modal">false</bool>
+						<string name="Name">Button</string>
+						<Ref name="NextSelectionDown">null</Ref>
+						<Ref name="NextSelectionLeft">null</Ref>
+						<Ref name="NextSelectionRight">null</Ref>
+						<Ref name="NextSelectionUp">null</Ref>
+						<UDim2 name="Position">
+							<XS>0</XS>
+							<XO>0</XO>
+							<YS>0</YS>
+							<YO>0</YO>
+						</UDim2>
+						<bool name="RichText">false</bool>
+						<Ref name="RootLocalizationTable">null</Ref>
+						<float name="Rotation">0</float>
+						<bool name="Selectable">true</bool>
+						<bool name="Selected">false</bool>
+						<token name="SelectionBehaviorDown">0</token>
+						<token name="SelectionBehaviorLeft">0</token>
+						<token name="SelectionBehaviorRight">0</token>
+						<token name="SelectionBehaviorUp">0</token>
+						<bool name="SelectionGroup">false</bool>
+						<Ref name="SelectionImageObject">null</Ref>
+						<int name="SelectionOrder">0</int>
+						<UDim2 name="Size">
+							<XS>0</XS>
+							<XO>200</XO>
+							<YS>0</YS>
+							<YO>50</YO>
+						</UDim2>
+						<token name="SizeConstraint">0</token>
+						<int64 name="SourceAssetId">-1</int64>
+						<token name="Style">0</token>
+						<BinaryString name="Tags"></BinaryString>
+						<string name="Text">Tree Node</string>
+						<Color3 name="TextColor3">
+							<R>1</R>
+							<G>1</G>
+							<B>1</B>
+						</Color3>
+						<bool name="TextScaled">true</bool>
+						<float name="TextSize">14</float>
+						<Color3 name="TextStrokeColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<float name="TextStrokeTransparency">1</float>
+						<float name="TextTransparency">0</float>
+						<token name="TextTruncate">0</token>
+						<bool name="TextWrapped">true</bool>
+						<token name="TextXAlignment">2</token>
+						<token name="TextYAlignment">1</token>
+						<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f1</UniqueId>
+						<bool name="Visible">true</bool>
+						<int name="ZIndex">1</int>
+					</Properties>
+					<Item class="UIPadding" referent="RBXA0B9D816F92F4ABC825A7022A8901BC1">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<string name="Name">UIPadding</string>
+							<UDim name="PaddingBottom">
+								<S>0.100000001</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingLeft">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingRight">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingTop">
+								<S>0.100000001</S>
+								<O>0</O>
+							</UDim>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f6</UniqueId>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="TextButton" referent="RBXB0EF6DB02ED340908723E66A6107C280">
+					<Properties>
+						<bool name="Active">true</bool>
+						<Vector2 name="AnchorPoint">
+							<X>0</X>
+							<Y>0</Y>
+						</Vector2>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<bool name="AutoButtonColor">true</bool>
+						<bool name="AutoLocalize">true</bool>
+						<token name="AutomaticSize">0</token>
+						<Color3 name="BackgroundColor3">
+							<R>0.36470589</R>
+							<G>0.36470589</G>
+							<B>0.36470589</B>
+						</Color3>
+						<float name="BackgroundTransparency">0.800000012</float>
+						<Color3 name="BorderColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<token name="BorderMode">0</token>
+						<int name="BorderSizePixel">0</int>
+						<bool name="ClipsDescendants">false</bool>
+						<bool name="Draggable">false</bool>
+						<token name="Font">4</token>
+						<Font name="FontFace">
+							<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+							<Weight>700</Weight>
+							<Style>Normal</Style>
+							<CachedFaceId><url>rbxasset://fonts/SourceSansPro-Bold.ttf</url></CachedFaceId>
+						</Font>
+						<int name="LayoutOrder">0</int>
+						<float name="LineHeight">1</float>
+						<int name="MaxVisibleGraphemes">-1</int>
+						<bool name="Modal">false</bool>
+						<string name="Name">Button</string>
+						<Ref name="NextSelectionDown">null</Ref>
+						<Ref name="NextSelectionLeft">null</Ref>
+						<Ref name="NextSelectionRight">null</Ref>
+						<Ref name="NextSelectionUp">null</Ref>
+						<UDim2 name="Position">
+							<XS>0</XS>
+							<XO>0</XO>
+							<YS>0</YS>
+							<YO>0</YO>
+						</UDim2>
+						<bool name="RichText">false</bool>
+						<Ref name="RootLocalizationTable">null</Ref>
+						<float name="Rotation">0</float>
+						<bool name="Selectable">true</bool>
+						<bool name="Selected">false</bool>
+						<token name="SelectionBehaviorDown">0</token>
+						<token name="SelectionBehaviorLeft">0</token>
+						<token name="SelectionBehaviorRight">0</token>
+						<token name="SelectionBehaviorUp">0</token>
+						<bool name="SelectionGroup">false</bool>
+						<Ref name="SelectionImageObject">null</Ref>
+						<int name="SelectionOrder">0</int>
+						<UDim2 name="Size">
+							<XS>0</XS>
+							<XO>200</XO>
+							<YS>0</YS>
+							<YO>50</YO>
+						</UDim2>
+						<token name="SizeConstraint">0</token>
+						<int64 name="SourceAssetId">-1</int64>
+						<token name="Style">0</token>
+						<BinaryString name="Tags"></BinaryString>
+						<string name="Text">Tree Node</string>
+						<Color3 name="TextColor3">
+							<R>1</R>
+							<G>1</G>
+							<B>1</B>
+						</Color3>
+						<bool name="TextScaled">true</bool>
+						<float name="TextSize">14</float>
+						<Color3 name="TextStrokeColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<float name="TextStrokeTransparency">1</float>
+						<float name="TextTransparency">0</float>
+						<token name="TextTruncate">0</token>
+						<bool name="TextWrapped">true</bool>
+						<token name="TextXAlignment">2</token>
+						<token name="TextYAlignment">1</token>
+						<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f2</UniqueId>
+						<bool name="Visible">true</bool>
+						<int name="ZIndex">1</int>
+					</Properties>
+					<Item class="UIPadding" referent="RBX514B5ADD0C3B40D0B96621AC499FFCAA">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<string name="Name">UIPadding</string>
+							<UDim name="PaddingBottom">
+								<S>0.100000001</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingLeft">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingRight">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingTop">
+								<S>0.100000001</S>
+								<O>0</O>
+							</UDim>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f7</UniqueId>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="UIGridLayout" referent="RBXC8A031BB4ADF47668FE728D5511BF1B9">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<UDim2 name="CellPadding">
+							<XS>0</XS>
+							<XO>0</XO>
+							<YS>0.00999999978</YS>
+							<YO>0</YO>
+						</UDim2>
+						<UDim2 name="CellSize">
+							<XS>1</XS>
+							<XO>0</XO>
+							<YS>0.100000001</YS>
+							<YO>0</YO>
+						</UDim2>
+						<token name="FillDirection">0</token>
+						<int name="FillDirectionMaxCells">0</int>
+						<token name="HorizontalAlignment">1</token>
+						<string name="Name">UIGridLayout</string>
+						<token name="SortOrder">2</token>
+						<int64 name="SourceAssetId">-1</int64>
+						<token name="StartCorner">0</token>
+						<BinaryString name="Tags"></BinaryString>
+						<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f4</UniqueId>
+						<token name="VerticalAlignment">1</token>
+					</Properties>
+					<Item class="UIAspectRatioConstraint" referent="RBX8D211873A7E24B2E828AF53436729F76">
+						<Properties>
+							<float name="AspectRatio">3.5</float>
+							<token name="AspectType">1</token>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<token name="DominantAxis">0</token>
+							<string name="Name">UIAspectRatioConstraint</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f3</UniqueId>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="UIPadding" referent="RBX03CAE778582B48EFAAB4C4711CE5B345">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<string name="Name">UIPadding</string>
+						<UDim name="PaddingBottom">
+							<S>0</S>
+							<O>0</O>
+						</UDim>
+						<UDim name="PaddingLeft">
+							<S>0.0199999996</S>
+							<O>0</O>
+						</UDim>
+						<UDim name="PaddingRight">
+							<S>0.0199999996</S>
+							<O>0</O>
+						</UDim>
+						<UDim name="PaddingTop">
+							<S>0.00999999978</S>
+							<O>0</O>
+						</UDim>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+						<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811f8</UniqueId>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="Frame" referent="RBXE2FE5BBD4E55488C952C20B13705C5F2">
+				<Properties>
+					<bool name="Active">false</bool>
+					<Vector2 name="AnchorPoint">
+						<X>0</X>
+						<Y>0</Y>
+					</Vector2>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<bool name="AutoLocalize">true</bool>
+					<token name="AutomaticSize">0</token>
+					<Color3 name="BackgroundColor3">
+						<R>0.23137255</R>
+						<G>0.23137255</G>
+						<B>0.23137255</B>
+					</Color3>
+					<float name="BackgroundTransparency">0</float>
+					<Color3 name="BorderColor3">
+						<R>0.105882362</R>
+						<G>0.164705887</G>
+						<B>0.207843155</B>
+					</Color3>
+					<token name="BorderMode">0</token>
+					<int name="BorderSizePixel">0</int>
+					<bool name="ClipsDescendants">false</bool>
+					<bool name="Draggable">false</bool>
+					<int name="LayoutOrder">0</int>
+					<string name="Name">SeparatorFrame</string>
+					<Ref name="NextSelectionDown">null</Ref>
+					<Ref name="NextSelectionLeft">null</Ref>
+					<Ref name="NextSelectionRight">null</Ref>
+					<Ref name="NextSelectionUp">null</Ref>
+					<UDim2 name="Position">
+						<XS>0.200000003</XS>
+						<XO>0</XO>
+						<YS>0</YS>
+						<YO>0</YO>
+					</UDim2>
+					<Ref name="RootLocalizationTable">null</Ref>
+					<float name="Rotation">0</float>
+					<bool name="Selectable">false</bool>
+					<token name="SelectionBehaviorDown">0</token>
+					<token name="SelectionBehaviorLeft">0</token>
+					<token name="SelectionBehaviorRight">0</token>
+					<token name="SelectionBehaviorUp">0</token>
+					<bool name="SelectionGroup">false</bool>
+					<Ref name="SelectionImageObject">null</Ref>
+					<int name="SelectionOrder">0</int>
+					<UDim2 name="Size">
+						<XS>0.0500000007</XS>
+						<XO>0</XO>
+						<YS>1</YS>
+						<YO>0</YO>
+					</UDim2>
+					<token name="SizeConstraint">0</token>
+					<int64 name="SourceAssetId">-1</int64>
+					<token name="Style">0</token>
+					<BinaryString name="Tags"></BinaryString>
+					<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811ee</UniqueId>
+					<bool name="Visible">true</bool>
+					<int name="ZIndex">0</int>
+				</Properties>
+			</Item>
+			<Item class="Frame" referent="RBXE1FA37A30F7646E09A7639123A9EC153">
+				<Properties>
+					<bool name="Active">false</bool>
+					<Vector2 name="AnchorPoint">
+						<X>0</X>
+						<Y>0</Y>
+					</Vector2>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<bool name="AutoLocalize">true</bool>
+					<token name="AutomaticSize">0</token>
+					<Color3 name="BackgroundColor3">
+						<R>0.168627456</R>
+						<G>0.168627456</G>
+						<B>0.168627456</B>
+					</Color3>
+					<float name="BackgroundTransparency">0</float>
+					<Color3 name="BorderColor3">
+						<R>0.105882362</R>
+						<G>0.164705887</G>
+						<B>0.207843155</B>
+					</Color3>
+					<token name="BorderMode">0</token>
+					<int name="BorderSizePixel">0</int>
+					<bool name="ClipsDescendants">false</bool>
+					<bool name="Draggable">false</bool>
+					<int name="LayoutOrder">0</int>
+					<string name="Name">FlowChartFrame</string>
+					<Ref name="NextSelectionDown">null</Ref>
+					<Ref name="NextSelectionLeft">null</Ref>
+					<Ref name="NextSelectionRight">null</Ref>
+					<Ref name="NextSelectionUp">null</Ref>
+					<UDim2 name="Position">
+						<XS>0.204999998</XS>
+						<XO>0</XO>
+						<YS>0</YS>
+						<YO>0</YO>
+					</UDim2>
+					<Ref name="RootLocalizationTable">null</Ref>
+					<float name="Rotation">0</float>
+					<bool name="Selectable">false</bool>
+					<token name="SelectionBehaviorDown">0</token>
+					<token name="SelectionBehaviorLeft">0</token>
+					<token name="SelectionBehaviorRight">0</token>
+					<token name="SelectionBehaviorUp">0</token>
+					<bool name="SelectionGroup">false</bool>
+					<Ref name="SelectionImageObject">null</Ref>
+					<int name="SelectionOrder">0</int>
+					<UDim2 name="Size">
+						<XS>0.795000017</XS>
+						<XO>0</XO>
+						<YS>1</YS>
+						<YO>0</YO>
+					</UDim2>
+					<token name="SizeConstraint">0</token>
+					<int64 name="SourceAssetId">-1</int64>
+					<token name="Style">0</token>
+					<BinaryString name="Tags"></BinaryString>
+					<UniqueId name="UniqueId">24a3b9a257fa3c1e03154fe1000811ef</UniqueId>
+					<bool name="Visible">true</bool>
+					<int name="ZIndex">0</int>
+				</Properties>
 			</Item>
 		</Item>
 	</Item>
