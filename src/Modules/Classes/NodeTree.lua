@@ -8,39 +8,21 @@ local function setProperties(thisTable, toThis)
 	return toThis
 end
 
--- // BASE NODE // --
-local BaseNode = {}
-BaseNode.__index = BaseNode
+-- // NODE // --
+local Node = {}
+Node.__index = Node
 
-function BaseNode.New()
+function Node.New(nodeID)
 	return setmetatable({
 		x = 0,
 		y = 0,
 		layerZ = 0, -- what column they are in
 		radius = 35,
-		depends = {},
-	}, BaseNode)
-end
 
-function BaseNode:SetPosition(nX : number, nY : number)
-	self.x = nX
-	self.y = nY
-end
-
-function BaseNode:SetLayer(nLayer : number)
-	self.layerZ = nLayer
-end
-
--- // NODE // --
-local Node = BaseNode.New()
-Node.__index = Node
-
-function Node.New(nodeID)
-	return setmetatable(setProperties({
 		ID = nodeID or HttpService:GenerateGUID(false),
 		depends = {},
 		orderNumber = 0, -- set automatically to make room for lines
-	}, BaseNode.New()), Node)
+	}, Node)
 end
 
 function Node:LoadDepends(dependsTable)
@@ -49,19 +31,29 @@ function Node:LoadDepends(dependsTable)
 	end
 end
 
+function Node:SetPosition(nX : number, nY : number)
+	self.x = nX
+	self.y = nY
+end
+
+function Node:SetLayer(nLayer : number)
+	self.layerZ = nLayer
+end
+
 -- // TREE CLASS // --
 local TreeData = {}
 TreeData.__index = TreeData
 
 function TreeData.New()
 	return setmetatable({
+		name = "Unknown",
 		visible = false,
 		nodes = {},
 		IDToNode = {},
 		LayerZToNodeArray = {},
 
 		widthSeparation = 100,
-		windowHeight = 800
+		windowHeight = 500,
 	}, TreeData)
 end
 
@@ -71,6 +63,10 @@ end
 		{ ID = 'blah', Depends = {'blah2'}, Layer = 2 },
 	}
 ]]
+
+function TreeData:GetNodeFromID(nodeID)
+	return self.IDToNode[nodeID]
+end
 
 function TreeData:LoadNodes( nodesTable )
 	-- add all nodes
@@ -84,14 +80,13 @@ function TreeData:LoadNodes( nodesTable )
 		local newNode = Node.New(nodeData.ID)
 		newNode:SetLayer(nodeData.Layer)
 		newNode:LoadDepends( nodeData.Depends )
-
 		table.insert(self.nodes, newNode) -- array
 		self.IDToNode[nodeData.ID] = newNode -- hashmap
 		table.insert(layerZArray, newNode) -- layer array
 	end
 
 	-- check duplicate dependancies (recursive)
-	for layerNumber, layerNodes in pairs(self.layerZArray) do
+	for layerNumber, layerNodes in pairs(self.LayerZToNodeArray) do
 		local layerCount = #layerNodes
 		local deltaCount = (1 / layerCount);
 		local deltaStep = (self.windowHeight * 0.5) * deltaCount;
@@ -99,7 +94,7 @@ function TreeData:LoadNodes( nodesTable )
 		for nodeIndex, node in ipairs( layerNodes ) do
 			local nodeY = topHeight + (deltaStep * nodeIndex)
 			local nodeX = layerNumber * self.widthSeparation
-			node.setPosition( nodeX, nodeY );
+			node:SetPosition( nodeX, nodeY );
 		end
 	end
 end
@@ -113,16 +108,16 @@ end
 			for (int i = 0; i < nodes.length; i++) {
 				Node baseNode = nodes[i];
 				for (String dependID : baseNode.depends) {
-				Node dependedNode = IDToNode.get(dependID);
-				// If node is null, then the depended node is not within this tree.
-				if (dependedNode == null) {
-					printOnce("[WARN] Depended ID has no node in the tree! " + baseNode.ID + " depending on " + dependID);
-					continue;
-				}
-				// Create line to link the dependant ones
-				noFill();
-				bezierLine( baseNode.x, baseNode.y, dependedNode.x, dependedNode.y, widthSeparation);
-				fill(255);
+					Node dependedNode = IDToNode.get(dependID);
+					// If node is null, then the depended node is not within this tree.
+					if (dependedNode == null) {
+						printOnce("[WARN] Depended ID has no node in the tree! " + baseNode.ID + " depending on " + dependID);
+						continue;
+					}
+					// Create line to link the dependant ones
+					noFill();
+					bezierLine( baseNode.x, baseNode.y, dependedNode.x, dependedNode.y, widthSeparation);
+					fill(255);
 				}
 			}
 			// Show nodes
@@ -133,4 +128,4 @@ end
 	end
 ]]
 
-return { BaseNode = BaseNode, Node = Node, TreeData = TreeData }
+return { Node = Node, TreeData = TreeData }

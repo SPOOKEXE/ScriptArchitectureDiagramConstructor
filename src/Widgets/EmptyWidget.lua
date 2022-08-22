@@ -54,6 +54,7 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo)
 	dockWidget.Title = script.Name
+	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
 	Module.DockWidget = dockWidget
 end
