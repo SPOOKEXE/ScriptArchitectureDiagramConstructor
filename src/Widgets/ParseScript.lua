@@ -46,6 +46,51 @@ function Module:EnvClassParseTokens(parsedInfoArray, debugPrint)
 	return parsedInfoArray
 end
 
+function Module:ParseEnvArraysToNodeJSON(envParserArray)
+	-- { {fullScriptPath, tokenDictionary, envParser} }
+	local nodeArray = {}
+	for _, t in ipairs( envParserArray ) do
+		local scriptPath, tokenDictionary, envParser = unpack(t)
+		local nodesTable = {}
+		table.insert(nodeArray, {scriptPath, nodesTable})
+	end
+	return nodeArray
+end
+
+function Module:ConvertParseInfoArrayToNodeJSON(parsedInfoArray)
+	local nodeJSONArray = {}
+	--[[
+		{
+			ID = "Test1",
+			Layer = 1,
+			Depends = {"Test1"}
+		}
+
+		:SetData(node_data)
+	]]
+
+	-- SCOPE_VARIABLENAME_VALUETYPE
+
+	local scriptPath, tokenDictionary, envParser = unpack( parsedInfoArray[1] )
+
+	table.insert(nodeJSONArray, {
+		ID = "",
+		Layer = 1,
+		Depends = {},
+	})
+
+	--[[
+	for _, t in ipairs( parsedInfoArray ) do
+		local scriptPath, tokenDictionary, envParser = unpack(t)
+		local fromScriptNodeArray = {}
+
+		-- create each node here for each data point
+
+		table.move(fromScriptNodeArray, 1, #fromScriptNodeArray, #nodeJSONArray, nodeJSONArray)
+	end]]
+	return nodeJSONArray
+end
+
 function Module:Show()
 	Module.DockWidget.Enabled = true
 	-- print(script.Name, 'Show')
@@ -100,14 +145,9 @@ function Module:Init(otherSystems, plugin)
 	TriggerButton.TextScaled = true
 	TriggerButton.Activated:Connect(function()
 		local tokenScriptArray = Module:TokenParseSelections()
-		
-		local nodeArray = SystemsContainer.FlowDiagram:ParseEnvArraysToNodes(tokenScriptArray)
-		SystemsContainer.FlowDiagram:LoadNodeTree(nodeArrays)
-		SystemsContainer.FlowDiagram:ClearActiveTrees()
-		SystemsContainer.FlowDiagram:LoadTreeClasses( nodeArrays )
-		-- { {fullScriptPath, tokenDictionary, envParser} }
-		-- local nodeTreeClass = Module:ConstructPerScriptNodeTrees(result)
-		-- SystemsContainer.FlowDiagram:LoadNodeTree( nodeTreeClass )
+		local tokenNodeJSON = Module:ConvertParseInfoArrayToNodeJSON(tokenScriptArray)
+		local _ = SystemsContainer.FlowDiagram:ParseEnvArraysToNodeJSON(tokenNodeJSON)
+		SystemsContainer.FlowDiagramodule:UpdateTabs()
 	end)
 
 	local PadUDim = UDim.new(0.05, 0)

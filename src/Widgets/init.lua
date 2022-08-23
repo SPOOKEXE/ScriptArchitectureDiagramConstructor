@@ -12,8 +12,8 @@ function Module:Init(pluginObject)
 			continue
 		end
 		local System = {}
-		for otherName, otherTable in pairs(mTable) do
-			if mName == otherName then
+		for otherName, otherTable in pairs(Module) do
+			if mName == otherName or typeof(otherTable) ~= 'table' then
 				continue
 			end
 			System[otherName] = otherTable

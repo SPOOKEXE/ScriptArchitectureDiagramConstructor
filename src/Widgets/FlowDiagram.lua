@@ -3,77 +3,16 @@ local TweenService = game:GetService('TweenService')
 local PluginFolder = script.Parent.Parent
 local Modules = require(PluginFolder.Modules)
 
+local DefinedBaseUI = Modules.Defined.BaseUI
+
 local NodeTreeClassModule = Modules.Classes.NodeTree
 local MaidClass = Modules.Classes.Maid
 
 local SystemsContainer = {}
 
-local baseTreeSelectButton = Instance.new('TextButton') do
-	baseTreeSelectButton.Name = 'TreeDataSelectButton'
-	baseTreeSelectButton.TextColor3 = Color3.new(0.4, 0.4, 0.4)
-	baseTreeSelectButton.BackgroundColor3 = Color3.fromRGB(93, 93, 93)
-	baseTreeSelectButton.BackgroundTransparency = 0.8
-	baseTreeSelectButton.BorderSizePixel = 0
-	local uiScaleInstance = Instance.new('UIScale')
-	uiScaleInstance.Scale = 1
-	uiScaleInstance.Parent = baseTreeSelectButton
-end
-
-local baseFlowChartContainerFrame = Instance.new('Frame') do
-	baseFlowChartContainerFrame.BackgroundTransparency = 1
-	baseFlowChartContainerFrame.Size = UDim2.fromScale(0.975, 0.975)
-	baseFlowChartContainerFrame.Position = UDim2.fromScale(0.5, 0.5)
-	baseFlowChartContainerFrame.BorderSizePixel = 0
-	baseFlowChartContainerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-end
-
-local baseFlowChartNodeFrame = Instance.new('Frame') do
-	baseFlowChartNodeFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	baseFlowChartNodeFrame.BackgroundTransparency = 0.6
-	baseFlowChartNodeFrame.Size = UDim2.fromOffset(40, 40)
-	baseFlowChartNodeFrame.BorderSizePixel = 0
-	local uiCorner = Instance.new('UICorner')
-	uiCorner.CornerRadius = UDim.new(0.5, 0)
-	uiCorner.Parent = baseFlowChartNodeFrame
-end
-
-local baseLineFrame = Instance.new('Frame')
-baseLineFrame.BackgroundTransparency = 0
-baseLineFrame.BackgroundColor3 = Color3.new(1, 1, 1)
-baseLineFrame.BorderSizePixel = 0
-baseLineFrame.ZIndex = -1
-local function line(p1, p2)
-	local dir = (p2 - p1)
-	local length = dir.Magnitude
-	local newFrame = baseLineFrame:Clone()
-	newFrame.Rotation = math.deg( math.atan2(dir.y, dir.x) )
-	newFrame.Size = UDim2.fromOffset(length, 2)
-	newFrame.Position = UDim2.fromOffset(p1.x - length, p1.y)
-	return newFrame
-end
-
--- https://javascript.info/bezier-curve
-local function getCubicBezier(p1, p2, p3, p4, alpha)
-	return
-		math.pow( 1 - alpha, 3 ) * p1 +
-		3 * math.pow(1 - alpha, 2) * alpha * p2 +
-		3 * (1 - alpha) * math.pow(alpha, 2) * p3 +
-		math.pow(alpha, 3) * p4
-end
-
-local bezierResolution = 2 -- frame/pixels
-local function bezier(p1, p2, p3, p4)
-	local bezierFrames = {}
-	local totalSteps = math.floor((p4 - p1).Magnitude / bezierResolution)
-	local delta = (1 / totalSteps)
-	for step = 1, totalSteps do
-		local v = (step * delta)
-		local vectorA = getCubicBezier(p1, p2, p3, p4, v - delta)
-		local vectorB = getCubicBezier(p1, p2, p3, p4, v + delta)
-		table.insert(bezierFrames, line(vectorA, vectorB))
-	end
-	return bezierFrames
-end
+local baseTreeSelectButton = DefinedBaseUI.baseTreeSelectButton
+local baseFlowChartContainerFrame = DefinedBaseUI.baseFlowChartContainerFrame
+local baseFlowChartNodeFrame = DefinedBaseUI.baseFlowChartNodeFrame
 
 local function UIBezierLine(p1, p2, parentFrame)
 	local wasCreated = false
@@ -84,10 +23,10 @@ local function UIBezierLine(p1, p2, parentFrame)
 		bezierFolderInstance.Name = hashValue
 		bezierFolderInstance.Parent = parentFrame
 		if (p1.x == p2.x) or (p1.y == p2.y) then
-			line(p1, p2).Parent = bezierFolderInstance
+			DefinedBaseUI:Line(p1, p2).Parent = bezierFolderInstance
 		else
 			local dir = (p1 - p2)
-			local lineSegments = bezier(p1, Vector2.new(p1.x - (dir.x * 0.375), p1.y), Vector2.new(p2.x + (dir.x * 0.375), p2.y), p2 )
+			local lineSegments = DefinedBaseUI:CubicBezierLine(p1, Vector2.new(p1.x - (dir.x * 0.375), p1.y), Vector2.new(p2.x + (dir.x * 0.375), p2.y), p2 )
 			for _, segment in ipairs( lineSegments ) do
 				segment.Parent = bezierFolderInstance
 			end
@@ -112,29 +51,24 @@ Module.FlowChartFrame = false
 Module.ActiveTrees = {}
 Module.ButtonToTreeFrame = {}
 
-function Module:ParseEnvArraysToNodes(envParserArray)
-	-- { {fullScriptPath, tokenDictionary, envParser} }
-	local nodeArray = {}
-	for _, t in ipairs( envParserArray ) do
-		local scriptPath, tokenDictionary, envParser = unpack(t)
-		local nodesTable = {}
-		table.insert(nodeArray, {scriptPath, nodesTable})
-	end
-	return nodeArray
-end
-
 function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 	local Frame = FlowChartFrame:FindFirstChild(nodeClass.ID)
 	if not Frame then
 		Frame = baseFlowChartNodeFrame:Clone()
 		Frame.Position = UDim2.fromOffset(nodeClass.x, nodeClass.y)
+		print(Frame.Button:GetFullName())
+		Frame.Button.Activated:Connect(function()
+			print(nodeClass.ID)
+			SystemsContainer.NodeInfoDisplay:DisplayNodeData(nodeClass)
+		end)
+		Frame.ZIndex = 2
 		Frame.Parent = FlowChartFrame
 	end
 	return Frame
 end
 
 function Module:UpdateFramesInFlowChart( baseTreeClass, FlowChartFrame )
-	print(FlowChartFrame:GetFullName(), baseTreeClass)
+	print(FlowChartFrame:GetFullName(), #baseTreeClass.nodes)
 
 	for _, nodeClass in ipairs( baseTreeClass.nodes ) do
 		for _, dependID in ipairs( nodeClass.depends ) do
@@ -157,6 +91,7 @@ function Module:GetFlowChartFrame(baseTreeClass)
 	if not targetFrame then
 		targetFrame = baseFlowChartContainerFrame:Clone()
 		targetFrame.Name = baseTreeClass.name
+		targetFrame.Visible = false
 		targetFrame.Parent = Module.FlowChartFrame
 	end
 	return targetFrame
@@ -176,10 +111,10 @@ function Module:GetCategorySelectButton(baseTreeClass, targetFrame)
 		categoryButton = baseTreeSelectButton:Clone()
 		categoryButton.Name = baseTreeClass.name
 		categoryButton.MouseEnter:Connect(function()
-			TweenService:Create(categoryButton.UIScale, TweenInfo.new(0.25), {Scale = 1.05}):Play()
+			TweenService:Create(categoryButton._UI_SCALE, TweenInfo.new(0.25), {Scale = 1.05}):Play()
 		end)
 		categoryButton.MouseLeave:Connect(function()
-			TweenService:Create(categoryButton.UIScale, TweenInfo.new(0.25), {Scale = 1}):Play()
+			TweenService:Create(categoryButton._UI_SCALE, TweenInfo.new(0.25), {Scale = 1}):Play()
 		end)
 		categoryButton.Activated:Connect(function()
 			Module:ToggleFrame(targetFrame)
@@ -217,6 +152,7 @@ function Module:LoadNodeJSON( nodeJSONArray )
 	local baseTreeClass = NodeTreeClassModule.TreeData.New()
 	baseTreeClass:LoadNodes( nodeJSONArray )
 	baseTreeClass.visible = true
+	table.insert(Module.ActiveTrees, baseTreeClass)
 	return baseTreeClass
 end
 
@@ -229,6 +165,10 @@ function Module:UpdateTabs()
 	end
 	-- update the frames
 	Module:UpdateFrames()
+	if not Module.FirstRun and #Module.ActiveTrees > 0 then
+		Module.FirstRun = true
+		Module:ToggleFrame(Module.FlowChartFrame:FindFirstChildWhichIsA('Frame'))
+	end
 end
 
 function Module:Show()
@@ -264,6 +204,7 @@ function Module:Destroy()
 end
 
 function Module:Init(otherSystems, plugin)
+	print(otherSystems)
 	SystemsContainer = otherSystems
 	Module.plugin = plugin
 
@@ -296,15 +237,6 @@ function Module:Init(otherSystems, plugin)
 	ContainerFrame.ZIndex = 1
 	ContainerFrame.Parent = dockWidget
 
-	local TreeSelectFrame = Instance.new('Frame')
-	TreeSelectFrame.Name = 'TreeSelectFrame'
-	TreeSelectFrame.BorderSizePixel = 0
-	TreeSelectFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
-	TreeSelectFrame.Size = UDim2.fromScale(0.2, 1)
-	TreeSelectFrame.ZIndex = 0
-	TreeSelectFrame.Parent = ContainerFrame
-	self.TreeSelectFrame = TreeSelectFrame
-
 	local SeparatorFrame = Instance.new('Frame')
 	SeparatorFrame.Name = 'SeparatorFrame'
 	SeparatorFrame.BorderSizePixel = 0
@@ -325,24 +257,30 @@ function Module:Init(otherSystems, plugin)
 	FlowChartFrame.Parent = ContainerFrame
 	self.FlowChartFrame = FlowChartFrame
 
+	-- Select Tree Frame
+	local TreeSelectFrame = Instance.new('Frame')
+	TreeSelectFrame.Name = 'TreeSelectFrame'
+	TreeSelectFrame.BorderSizePixel = 0
+	TreeSelectFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+	TreeSelectFrame.Size = UDim2.fromScale(0.2, 1)
+	TreeSelectFrame.ZIndex = 0
+	TreeSelectFrame.Parent = ContainerFrame
+	self.TreeSelectFrame = TreeSelectFrame
 	local TreeSelectGridLayout  = Instance.new('UIGridLayout')
 	TreeSelectGridLayout.CellPadding = UDim2.fromScale(0, 0.01)
 	TreeSelectGridLayout.CellSize = UDim2.fromScale(1, 0.1)
 	TreeSelectGridLayout.Parent = TreeSelectFrame
-	local TreeSelectAspectRatio = Instance.new('UIAspectRatioConstraint')
+	local TreeSelectAspectRatio = DefinedBaseUI.BASE_UI_ASPECT_RATIO:Clone()
 	TreeSelectAspectRatio.AspectRatio = 3.5
-	TreeSelectAspectRatio.AspectType = Enum.AspectType.ScaleWithParentSize
 	TreeSelectAspectRatio.Parent = TreeSelectGridLayout
-	local TreeSelectUIPadding = Instance.new('UIPadding')
+	local TreeSelectUIPadding = DefinedBaseUI.BASE_UI_PADDING:Clone()
 	TreeSelectUIPadding.PaddingTop = UDim.new(0.01, 0)
 	TreeSelectUIPadding.PaddingLeft = UDim.new(0.02, 0)
 	TreeSelectUIPadding.PaddingRight = UDim.new(0.02, 0)
 	TreeSelectUIPadding.Parent = TreeSelectFrame
 
-	local treeClass = Module:LoadNodeJSON( Modules.Defined.TestDiagram )
-	table.insert(Module.ActiveTrees, treeClass)
+	local _ = Module:LoadNodeJSON( Modules.Defined.TestDiagram )
 	Module:UpdateTabs()
-
 	Module:Toggle(true)
 end
 

@@ -22,6 +22,7 @@ function Node.New(nodeID)
 		ID = nodeID or HttpService:GenerateGUID(false),
 		depends = {},
 		orderNumber = 0, -- set automatically to make room for lines
+		node_data = false,
 	}, Node)
 end
 
@@ -38,6 +39,10 @@ end
 
 function Node:SetLayer(nLayer : number)
 	self.layerZ = nLayer
+end
+
+function Node:SetData(node_data)
+	self.node_data = node_data
 end
 
 -- // TREE CLASS // --
