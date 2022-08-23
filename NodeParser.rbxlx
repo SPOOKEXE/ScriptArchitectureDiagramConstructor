@@ -18520,7 +18520,6 @@ return Module
 					<string name="ScriptGuid">{9244D2F3-DE1E-4EFD-99EE-D705C288A6CB}</string>
 					<ProtectedString name="Source"><![CDATA[
 local pluginToolbar = plugin:CreateToolbar("Script Architecture Diagram")
-local pluginScriptParseButton = pluginToolbar:CreateButton("Open Widget", "Open The Widget", "Open Button", "8939587672")
 
 local pluginFolder = script.Parent
 local Modules = require(pluginFolder:WaitForChild('Modules'))
@@ -18638,8 +18637,8 @@ function Module:Init(pluginObject)
 			continue
 		end
 		local System = {}
-		for otherName, otherTable in pairs(mTable) do
-			if mName == otherName then
+		for otherName, otherTable in pairs(Module) do
+			if mName == otherName or typeof(otherTable) ~= 'table' then
 				continue
 			end
 			System[otherName] = otherTable
@@ -18801,6 +18800,8 @@ function Module:ConvertParseInfoArrayToNodeJSON(parsedInfoArray)
 			Layer = 1,
 			Depends = {"Test1"}
 		}
+
+		:SetData(node_data)
 	]]
 
 	-- SCOPE_VARIABLENAME_VALUETYPE
@@ -18970,7 +18971,7 @@ function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 		Frame.Position = UDim2.fromOffset(nodeClass.x, nodeClass.y)
 		print(Frame.Button:GetFullName())
 		Frame.Button.Activated:Connect(function()
-			print(nodeClass.ID, .)
+			print(nodeClass.ID)
 			SystemsContainer.NodeInfoDisplay:DisplayNodeData(nodeClass)
 		end)
 		Frame.ZIndex = 2
@@ -19116,6 +19117,7 @@ function Module:Destroy()
 end
 
 function Module:Init(otherSystems, plugin)
+	print(otherSystems)
 	SystemsContainer = otherSystems
 	Module.plugin = plugin
 
