@@ -91,6 +91,30 @@ function Module:GetFlowChartFrame(baseTreeClass)
 	if not targetFrame then
 		targetFrame = baseFlowChartContainerFrame:Clone()
 		targetFrame.Name = baseTreeClass.name
+
+		local Holding = false
+		local LastXY = Vector2.new(0, 0)
+		targetFrame.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				Holding = true
+			end
+		end)
+
+		targetFrame.InputChanged:Connect(function(input)
+			local newXY = Vector2.new(input.Position.X, input.Position.Y)
+			if Holding then
+				local delta = (newXY-LastXY)
+				targetFrame.CanvasPosition += delta
+			end
+			LastXY = newXY
+		end)
+
+		targetFrame.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				Holding = false
+			end
+		end)
+
 		targetFrame.Visible = false
 		targetFrame.Parent = Module.FlowChartFrame
 	end

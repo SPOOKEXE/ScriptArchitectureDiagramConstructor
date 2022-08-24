@@ -50,12 +50,24 @@ local baseTreeSelectButton = Instance.new('TextButton') do
 end
 Module.baseTreeSelectButton = baseTreeSelectButton
 
-local baseFlowChartContainerFrame = Instance.new('Frame') do
+local baseFlowChartContainerFrame = Instance.new('ScrollingFrame') do
 	baseFlowChartContainerFrame.BackgroundTransparency = 1
 	baseFlowChartContainerFrame.Size = UDim2.fromScale(0.975, 0.975)
 	baseFlowChartContainerFrame.Position = UDim2.fromScale(0.5, 0.5)
 	baseFlowChartContainerFrame.BorderSizePixel = 0
 	baseFlowChartContainerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	baseFlowChartContainerFrame.ScrollingEnabled = false
+	baseFlowChartContainerFrame.ScrollBarThickness = 0
+	baseFlowChartContainerFrame.CanvasSize = UDim2.fromOffset(1200, 700)
+	local gridIcon = Instance.new('ImageLabel')
+	gridIcon.Name = 'GridIcon'
+	gridIcon.BackgroundTransparency = 1
+	gridIcon.Size = UDim2.fromScale(1, 1)
+	gridIcon.ZIndex = -2
+	gridIcon.Image = 'rbxassetid://9446123374'
+	gridIcon.ScaleType = Enum.ScaleType.Tile
+	gridIcon.TileSize = UDim2.fromOffset(10, 10)
+	gridIcon.Parent = baseFlowChartContainerFrame
 end
 Module.baseFlowChartContainerFrame = baseFlowChartContainerFrame
 
