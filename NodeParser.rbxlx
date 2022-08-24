@@ -81,27 +81,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>24.2458248</X>
-					<Y>87.8930054</Y>
-					<Z>4.88661098</Z>
-					<R00>-0</R00>
-					<R01>-0.754354775</R01>
-					<R02>0.656466961</R02>
-					<R10>-0</R10>
-					<R11>0.656466961</R11>
-					<R12>0.754354775</R12>
-					<R20>-1</R20>
-					<R21>0</R21>
-					<R22>-0</R22>
+					<X>29.6581402</X>
+					<Y>93.718605</Y>
+					<Z>3.89688277</Z>
+					<R00>-0.145599335</R00>
+					<R01>-0.725613654</R01>
+					<R02>0.672521889</R02>
+					<R10>-7.4505806e-09</R10>
+					<R11>0.679765761</R11>
+					<R12>0.733429313</R12>
+					<R20>-0.989343643</R20>
+					<R21>0.10678681</R21>
+					<R22>-0.0989734381</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>22.932888</X>
-					<Y>86.3842926</Y>
-					<Z>4.88661098</Z>
+					<X>28.313097</X>
+					<Y>92.2517471</Y>
+					<Z>4.09482956</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -18633,6 +18633,7 @@ end))
 WidgetModule:Init(plugin)
 ButtonClass.New(WidgetModule.ParseScript, 'Parse Script', 'This widget is used to parse scripts.', 'rbxassetid://8939587672')
 ButtonClass.New(WidgetModule.FlowDiagram, 'Flow Diagram', 'This widget is used to hold diagrams', 'rbxassetid://8939587672')
+ButtonClass.New(WidgetModule.NodeInfoDisplay, 'Node Info', 'This widget is used to display node information', 'rbxassetid://8939587672')
 ]]></ProtectedString>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags"></BinaryString>
@@ -18882,11 +18883,12 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 		Enum.InitialDockState.Float,
-		false, true,
+		true, true,
 		250, 150, 50, 30
 	)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo)
+	dockWidget.Name = 'ParseScript'
 	dockWidget.Title = script.Name
 	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
@@ -19189,11 +19191,12 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 		Enum.InitialDockState.Float,
-		false, true,
+		true, true,
 		600, 400, 600, 400
 	)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo) :: DockWidgetPluginGui
+	dockWidget.Name = 'FlowDiagram'
 	dockWidget.Title = script.Name
 	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
@@ -19332,15 +19335,26 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 		Enum.InitialDockState.Float,
-		false, true,
+		true, true,
 		250, 250, 250, 250
 	)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo)
+	dockWidget.Name = 'NodeInfoDisplay'
 	dockWidget.Title = script.Name
 	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
 	Module.DockWidget = dockWidget
+
+	do
+		local BackgroundFrame = Instance.new('Frame')
+		BackgroundFrame.Name = 'BackgroundFrame'
+		BackgroundFrame.BorderSizePixel = 0
+		BackgroundFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+		BackgroundFrame.Size = UDim2.fromScale(1, 1)
+		BackgroundFrame.ZIndex = 0
+		BackgroundFrame.Parent = dockWidget
+	end
 end
 
 return Module

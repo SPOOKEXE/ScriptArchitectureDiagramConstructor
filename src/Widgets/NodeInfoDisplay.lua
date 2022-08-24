@@ -52,15 +52,26 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 		Enum.InitialDockState.Float,
-		false, true,
+		true, true,
 		250, 250, 250, 250
 	)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo)
+	dockWidget.Name = 'NodeInfoDisplay'
 	dockWidget.Title = script.Name
 	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
 	Module.DockWidget = dockWidget
+
+	do
+		local BackgroundFrame = Instance.new('Frame')
+		BackgroundFrame.Name = 'BackgroundFrame'
+		BackgroundFrame.BorderSizePixel = 0
+		BackgroundFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+		BackgroundFrame.Size = UDim2.fromScale(1, 1)
+		BackgroundFrame.ZIndex = 0
+		BackgroundFrame.Parent = dockWidget
+	end
 end
 
 return Module

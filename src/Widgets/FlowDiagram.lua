@@ -254,11 +254,12 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 		Enum.InitialDockState.Float,
-		false, true,
+		true, true,
 		600, 400, 600, 400
 	)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo) :: DockWidgetPluginGui
+	dockWidget.Name = 'FlowDiagram'
 	dockWidget.Title = script.Name
 	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false

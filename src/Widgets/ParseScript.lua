@@ -125,11 +125,12 @@ function Module:Init(otherSystems, plugin)
 
 	local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 		Enum.InitialDockState.Float,
-		false, true,
+		true, true,
 		250, 150, 50, 30
 	)
 
 	local dockWidget = plugin:CreateDockWidgetPluginGui(script.Name, dockWidgetInfo)
+	dockWidget.Name = 'ParseScript'
 	dockWidget.Title = script.Name
 	dockWidget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	dockWidget.Enabled = false
