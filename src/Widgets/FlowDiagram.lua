@@ -57,6 +57,7 @@ function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 		Frame = baseFlowChartNodeFrame:Clone()
 		Frame.Position = UDim2.fromOffset(nodeClass.x, nodeClass.y)
 		print(Frame.Button:GetFullName())
+		Frame.IDLabel.Text = nodeClass.ID
 		Frame.Button.Activated:Connect(function()
 			print(nodeClass.ID)
 			SystemsContainer.NodeInfoDisplay:DisplayNodeData(nodeClass)
@@ -86,36 +87,55 @@ function Module:UpdateFramesInFlowChart( baseTreeClass, FlowChartFrame )
 	end
 end
 
-function Module:GetFlowChartFrame(baseTreeClass)
-	local targetFrame = Module.FlowChartFrame:FindFirstChild(baseTreeClass.name)
-	if not targetFrame then
-		targetFrame = baseFlowChartContainerFrame:Clone()
-		targetFrame.Name = baseTreeClass.name
+function Module:SetupChartInputMechanics( targetFrame : ScrollingFrame )
+	assert(typeof(targetFrame) == 'Instance' and targetFrame:IsA('ScrollingFrame'), 'Passed targetFrame is not a ScrollingFrame!')
 
-		local Holding = false
-		local LastXY = Vector2.new(0, 0)
-		targetFrame.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Holding = true
-			end
-		end)
+	local Holding, LastXY = false, Vector2.new(0, 0)
+	local MaidInstance = MaidClass.New()
 
-		targetFrame.InputChanged:Connect(function(input)
+	local UIScaleInstance = Instance.new('UIScale')
+	UIScaleInstance.Parent = targetFrame
+
+	MaidInstance:Give(targetFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			Holding = true
+		end
+	end))
+
+	MaidInstance:Give(targetFrame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			local newXY = Vector2.new(input.Position.X, input.Position.Y)
 			if Holding then
 				local delta = (newXY-LastXY)
 				targetFrame.CanvasPosition += delta
 			end
 			LastXY = newXY
-		end)
+		elseif input.UserInputType == Enum.UserInputType.MouseWheel then
+			local nextScale = UIScaleInstance.Scale + (input.Position.Z * 0.05)
+			UIScaleInstance.Scale = math.clamp(nextScale, 0.1, 2)
+		end
+	end))
 
-		targetFrame.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Holding = false
-			end
-		end)
+	MaidInstance:Give(targetFrame.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			Holding = false
+		end
+	end))
 
+	MaidInstance:Give(targetFrame.Destroying:Connect(function()
+		MaidInstance:Cleanup()
+	end))
+
+	MaidInstance:Give(UIScaleInstance)
+end
+
+function Module:GetFlowChartFrame(baseTreeClass)
+	local targetFrame = Module.FlowChartFrame:FindFirstChild(baseTreeClass.name)
+	if not targetFrame then
+		targetFrame = baseFlowChartContainerFrame:Clone()
+		targetFrame.Name = baseTreeClass.name
 		targetFrame.Visible = false
+		Module:SetupChartInputMechanics( targetFrame )
 		targetFrame.Parent = Module.FlowChartFrame
 	end
 	return targetFrame

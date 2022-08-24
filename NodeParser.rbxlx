@@ -18460,6 +18460,7 @@ local baseFlowChartContainerFrame = Instance.new('ScrollingFrame') do
 	baseFlowChartContainerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 	baseFlowChartContainerFrame.ScrollingEnabled = false
 	baseFlowChartContainerFrame.ScrollBarThickness = 0
+	baseFlowChartContainerFrame.ScrollBarImageTransparency = 1
 	baseFlowChartContainerFrame.CanvasSize = UDim2.fromOffset(1200, 700)
 	local gridIcon = Instance.new('ImageLabel')
 	gridIcon.Name = 'GridIcon'
@@ -18479,6 +18480,15 @@ local baseFlowChartNodeFrame = Instance.new('Frame') do
 	baseFlowChartNodeFrame.BackgroundTransparency = 0.05
 	baseFlowChartNodeFrame.Size = UDim2.fromOffset(40, 40)
 	baseFlowChartNodeFrame.BorderSizePixel = 0
+	local flowChartNodeIDLabel = Instance.new('TextLabel')
+	flowChartNodeIDLabel.Name = 'IDLabel'
+	flowChartNodeIDLabel.BackgroundTransparency = 1
+	flowChartNodeIDLabel.Size = UDim2.fromScale(1, 0.2)
+	flowChartNodeIDLabel.TextScaled = true
+	flowChartNodeIDLabel.TextColor3 = Color3.new(1, 1, 1)
+	flowChartNodeIDLabel.Position = UDim2.fromScale(0, 1)
+	flowChartNodeIDLabel.Text = 'ID_HERE'
+	flowChartNodeIDLabel.Parent = baseFlowChartNodeFrame
 	BASE_CIRCLE_UI_CORNER:Clone().Parent = baseFlowChartNodeFrame
 	BASE_INV_IMAGE_BUTTON:Clone().Parent = baseFlowChartNodeFrame
 end
@@ -18982,6 +18992,7 @@ function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 		Frame = baseFlowChartNodeFrame:Clone()
 		Frame.Position = UDim2.fromOffset(nodeClass.x, nodeClass.y)
 		print(Frame.Button:GetFullName())
+		Frame.IDLabel.Text = nodeClass.ID
 		Frame.Button.Activated:Connect(function()
 			print(nodeClass.ID)
 			SystemsContainer.NodeInfoDisplay:DisplayNodeData(nodeClass)
@@ -19011,36 +19022,55 @@ function Module:UpdateFramesInFlowChart( baseTreeClass, FlowChartFrame )
 	end
 end
 
-function Module:GetFlowChartFrame(baseTreeClass)
-	local targetFrame = Module.FlowChartFrame:FindFirstChild(baseTreeClass.name)
-	if not targetFrame then
-		targetFrame = baseFlowChartContainerFrame:Clone()
-		targetFrame.Name = baseTreeClass.name
+function Module:SetupChartInputMechanics( targetFrame : ScrollingFrame )
+	assert(typeof(targetFrame) == 'Instance' and targetFrame:IsA('ScrollingFrame'), 'Passed targetFrame is not a ScrollingFrame!')
 
-		local Holding = false
-		local LastXY = Vector2.new(0, 0)
-		targetFrame.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Holding = true
-			end
-		end)
+	local Holding, LastXY = false, Vector2.new(0, 0)
+	local MaidInstance = MaidClass.New()
 
-		targetFrame.InputChanged:Connect(function(input)
+	local UIScaleInstance = Instance.new('UIScale')
+	UIScaleInstance.Parent = targetFrame
+
+	MaidInstance:Give(targetFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			Holding = true
+		end
+	end))
+
+	MaidInstance:Give(targetFrame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			local newXY = Vector2.new(input.Position.X, input.Position.Y)
 			if Holding then
 				local delta = (newXY-LastXY)
 				targetFrame.CanvasPosition += delta
 			end
 			LastXY = newXY
-		end)
+		elseif input.UserInputType == Enum.UserInputType.MouseWheel then
+			local nextScale = UIScaleInstance.Scale + (input.Position.Z * 0.05)
+			UIScaleInstance.Scale = math.clamp(nextScale, 0.1, 2)
+		end
+	end))
 
-		targetFrame.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Holding = false
-			end
-		end)
+	MaidInstance:Give(targetFrame.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			Holding = false
+		end
+	end))
 
+	MaidInstance:Give(targetFrame.Destroying:Connect(function()
+		MaidInstance:Cleanup()
+	end))
+
+	MaidInstance:Give(UIScaleInstance)
+end
+
+function Module:GetFlowChartFrame(baseTreeClass)
+	local targetFrame = Module.FlowChartFrame:FindFirstChild(baseTreeClass.name)
+	if not targetFrame then
+		targetFrame = baseFlowChartContainerFrame:Clone()
+		targetFrame.Name = baseTreeClass.name
 		targetFrame.Visible = false
+		Module:SetupChartInputMechanics( targetFrame )
 		targetFrame.Parent = Module.FlowChartFrame
 	end
 	return targetFrame
