@@ -10731,7 +10731,7 @@ Class.__index = Class
 function Class.New()
 	return setmetatable({
 		LastParse = 0,
-		LastScopeRegistry = false,
+		RootScopeRegistry = false,
 		ScopeConnectionMap = {},
 		ScopeRegistries = {},
 	}, Class)
@@ -10819,7 +10819,7 @@ end
 function Class:ParseTokens(tokenDictionary)
 	self:Reset()
 	local rootEnvDictionary = self:ParseStatementList(false, tokenDictionary.StatementList, false)
-	self.LastScopeRegistry = rootEnvDictionary
+	self.RootScopeRegistry = rootEnvDictionary
 	return rootEnvDictionary
 end
 

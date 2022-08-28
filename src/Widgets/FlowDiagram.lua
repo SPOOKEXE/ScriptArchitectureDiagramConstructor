@@ -10,9 +10,57 @@ local MaidClass = Modules.Classes.Maid
 
 local SystemsContainer = {}
 
-local baseTreeSelectButton = DefinedBaseUI.baseTreeSelectButton
-local baseFlowChartContainerFrame = DefinedBaseUI.baseFlowChartContainerFrame
-local baseFlowChartNodeFrame = DefinedBaseUI.baseFlowChartNodeFrame
+local baseTreeSelectButton = Instance.new('TextButton') do
+	baseTreeSelectButton.Name = 'TreeDataSelectButton'
+	baseTreeSelectButton.TextColor3 = Color3.new(0.4, 0.4, 0.4)
+	baseTreeSelectButton.BackgroundColor3 = Color3.fromRGB(93, 93, 93)
+	baseTreeSelectButton.BackgroundTransparency = 0.8
+	baseTreeSelectButton.BorderSizePixel = 0
+	local UIScale = Instance.new('UIScale')
+	UIScale.Name = '_UI_SCALE'
+	UIScale.Scale = 1
+	UIScale.Parent = baseTreeSelectButton
+end
+
+local baseFlowChartContainerFrame = Instance.new('ScrollingFrame') do
+	baseFlowChartContainerFrame.BackgroundTransparency = 1
+	baseFlowChartContainerFrame.Size = UDim2.fromScale(0.975, 0.975)
+	baseFlowChartContainerFrame.Position = UDim2.fromScale(0.5, 0.5)
+	baseFlowChartContainerFrame.BorderSizePixel = 0
+	baseFlowChartContainerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	baseFlowChartContainerFrame.ScrollingEnabled = false
+	baseFlowChartContainerFrame.ScrollBarThickness = 0
+	baseFlowChartContainerFrame.ScrollBarImageTransparency = 1
+	baseFlowChartContainerFrame.CanvasSize = UDim2.fromOffset(1200, 700)
+	local gridIcon = Instance.new('ImageLabel')
+	gridIcon.Name = 'GridIcon'
+	gridIcon.BackgroundTransparency = 1
+	gridIcon.Size = UDim2.fromScale(1, 1)
+	gridIcon.ZIndex = -2
+	gridIcon.Image = 'rbxassetid://9446123374'
+	gridIcon.ScaleType = Enum.ScaleType.Tile
+	gridIcon.TileSize = UDim2.fromOffset(10, 10)
+	gridIcon.Parent = baseFlowChartContainerFrame
+end
+
+local baseFlowChartNodeFrame = Instance.new('Frame') do
+	baseFlowChartNodeFrame.BackgroundColor3 = Color3.fromRGB(111, 130, 165)
+	baseFlowChartNodeFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	baseFlowChartNodeFrame.BackgroundTransparency = 0.05
+	baseFlowChartNodeFrame.Size = UDim2.fromOffset(40, 40)
+	baseFlowChartNodeFrame.BorderSizePixel = 0
+	local flowChartNodeIDLabel = Instance.new('TextLabel')
+	flowChartNodeIDLabel.Name = 'IDLabel'
+	flowChartNodeIDLabel.BackgroundTransparency = 1
+	flowChartNodeIDLabel.Size = UDim2.fromScale(1, 0.2)
+	flowChartNodeIDLabel.TextScaled = true
+	flowChartNodeIDLabel.TextColor3 = Color3.new(1, 1, 1)
+	flowChartNodeIDLabel.Position = UDim2.fromScale(0, 1)
+	flowChartNodeIDLabel.Text = 'ID_HERE'
+	flowChartNodeIDLabel.Parent = baseFlowChartNodeFrame
+	DefinedBaseUI.CIRCLE_UI_CORNER:Clone().Parent = baseFlowChartNodeFrame
+	DefinedBaseUI.INV_IMAGE_BUTTON:Clone().Parent = baseFlowChartNodeFrame
+end
 
 local function UIBezierLine(p1, p2, parentFrame)
 	local wasCreated = false
@@ -24,6 +72,11 @@ local function UIBezierLine(p1, p2, parentFrame)
 		bezierFolderInstance.Parent = parentFrame
 		if (p1.x == p2.x) or (p1.y == p2.y) then
 			DefinedBaseUI:Line(p1, p2).Parent = bezierFolderInstance
+			--[[
+			local lineSegments = DefinedBaseUI:Line(p1, p2)
+			for _, segment in ipairs( lineSegments ) do
+				segment.Parent = bezierFolderInstance
+			end]]
 		else
 			local dir = (p1 - p2)
 			local lineSegments = DefinedBaseUI:CubicBezierLine(p1, Vector2.new(p1.x - (dir.x * 0.375), p1.y), Vector2.new(p2.x + (dir.x * 0.375), p2.y), p2 )
@@ -56,10 +109,10 @@ function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 	if not Frame then
 		Frame = baseFlowChartNodeFrame:Clone()
 		Frame.Position = UDim2.fromOffset(nodeClass.x, nodeClass.y)
-		print(Frame.Button:GetFullName())
+		-- print(Frame.Button:GetFullName())
 		Frame.IDLabel.Text = nodeClass.ID
 		Frame.Button.Activated:Connect(function()
-			print(nodeClass.ID)
+			-- print(nodeClass.ID)
 			SystemsContainer.NodeInfoDisplay:DisplayNodeData(nodeClass)
 		end)
 		Frame.ZIndex = 2
@@ -170,10 +223,10 @@ function Module:GetCategorySelectButton(baseTreeClass, targetFrame)
 end
 
 function Module:UpdateFrames()
+
+	local nameCache = {}
 	for _, baseTreeClass in ipairs( Module.ActiveTrees ) do
-		if not baseTreeClass.visible then
-			continue
-		end
+		table.insert(nameCache, baseTreeClass.name)
 		local TreeFrame = Module:GetFlowChartFrame(baseTreeClass)
 		local TreeButton = Module:GetCategorySelectButton(baseTreeClass, TreeFrame)
 		if TreeButton then
@@ -181,38 +234,32 @@ function Module:UpdateFrames()
 			Module.ButtonToTreeFrame[TreeButton] = TreeFrame
 		end
 	end
-end
 
-function Module:LoadNodeArray( nodeArray )
-	local baseTreeClass = NodeTreeClassModule.TreeData.New()
-	-- baseTreeClass.IDToNode
-	-- baseTreeClass.LayerZToNodeMap
-	-- baseTreeClass.nodes
-	-- return IDToNode, LayerZToNodeMap, NodesArray
-	return baseTreeClass
-end
-
-function Module:LoadNodeJSON( nodeJSONArray )
-	local baseTreeClass = NodeTreeClassModule.TreeData.New()
-	baseTreeClass:LoadNodes( nodeJSONArray )
-	baseTreeClass.visible = true
-	table.insert(Module.ActiveTrees, baseTreeClass)
-	return baseTreeClass
-end
-
-function Module:UpdateTabs()
-	-- change tab highlights / visibility and stuff
-	for TreeButton, TreeFrame in pairs(Module.ButtonToTreeFrame) do
-		if not TreeFrame:IsDescendantOf(Module.FlowChartFrame) then
-			TreeButton:Destroy()
+	for Button, Frame in pairs( Module.ButtonToTreeFrame ) do
+		if not table.find(nameCache, Frame.Name) then
+			Module.ButtonToTreeFrame[Button] = nil
+			Button:Destroy()
+			Frame:Destroy()
 		end
 	end
-	-- update the frames
-	Module:UpdateFrames()
+
 	if not Module.FirstRun and #Module.ActiveTrees > 0 then
 		Module.FirstRun = true
 		Module:ToggleFrame(Module.FlowChartFrame:FindFirstChildWhichIsA('Frame'))
 	end
+end
+
+function Module:LoadNodeJSON( Name, nodeJSONArray )
+	local baseTreeClass = NodeTreeClassModule.TreeData.New()
+	baseTreeClass.name = Name
+	baseTreeClass:LoadNodes( nodeJSONArray )
+	table.insert(Module.ActiveTrees, baseTreeClass)
+	return baseTreeClass
+end
+
+function Module:ClearActiveTrees()
+	Modules.ActiveTrees = {}
+	Module:UpdateFrames()
 end
 
 function Module:Show()
@@ -248,7 +295,6 @@ function Module:Destroy()
 end
 
 function Module:Init(otherSystems, plugin)
-	print(otherSystems)
 	SystemsContainer = otherSystems
 	Module.plugin = plugin
 
@@ -315,17 +361,18 @@ function Module:Init(otherSystems, plugin)
 	TreeSelectGridLayout.CellPadding = UDim2.fromScale(0, 0.01)
 	TreeSelectGridLayout.CellSize = UDim2.fromScale(1, 0.1)
 	TreeSelectGridLayout.Parent = TreeSelectFrame
-	local TreeSelectAspectRatio = DefinedBaseUI.BASE_UI_ASPECT_RATIO:Clone()
+	local TreeSelectAspectRatio = Instance.new('UIAspectRatioConstraint')
+	TreeSelectAspectRatio.AspectType = Enum.AspectType.ScaleWithParentSize
 	TreeSelectAspectRatio.AspectRatio = 3.5
 	TreeSelectAspectRatio.Parent = TreeSelectGridLayout
-	local TreeSelectUIPadding = DefinedBaseUI.BASE_UI_PADDING:Clone()
+	local TreeSelectUIPadding = Instance.new('UIPadding')
 	TreeSelectUIPadding.PaddingTop = UDim.new(0.01, 0)
 	TreeSelectUIPadding.PaddingLeft = UDim.new(0.02, 0)
 	TreeSelectUIPadding.PaddingRight = UDim.new(0.02, 0)
 	TreeSelectUIPadding.Parent = TreeSelectFrame
 
-	local _ = Module:LoadNodeJSON( Modules.Defined.TestDiagram )
-	Module:UpdateTabs()
+	local _ = Module:LoadNodeJSON( "TestDiagram", Modules.Defined.TestDiagram )
+	Module:UpdateFrames()
 	Module:Toggle(true)
 end
 

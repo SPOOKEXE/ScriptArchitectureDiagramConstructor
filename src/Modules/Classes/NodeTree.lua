@@ -52,7 +52,6 @@ TreeData.__index = TreeData
 function TreeData.New()
 	return setmetatable({
 		name = "Unknown",
-		visible = false,
 		nodes = {},
 		IDToNode = {},
 		LayerZToNodeArray = {},

@@ -1,19 +1,23 @@
 
 local HttpService = game:GetService('HttpService')
+local sha256 = require(script.Parent.Parent.Utility.Hashlib).sha256
 
 local SkipTypeList = {'ReturnStat', 'GenericForStat', 'IfStat', 'AssignmentStat 1'}
 
-local ParseHandlers = {
-	LocalVarStat = function(scopeRegistry, statementIndex, data, depth)
-		table.insert(scopeRegistry.SetVariableNodes, {statementIndex, data.Type, data, depth})
-	end,
-	FunctionStat = function(scopeRegistry, statementIndex, data, depth)
-		table.insert(scopeRegistry.CreateFunctionNodes, {statementIndex, data.Type, data, depth})
-	end,
-	CallExprStat = function(scopeRegistry, statementIndex, data, depth)
-		table.insert(scopeRegistry.CallFunctionNodes, {statementIndex, data.Type, data, depth})
-	end,
-}
+local ParseHandlers = {}
+
+ParseHandlers.LocalVarStat = function(_, scopeRegistry, statementIndex, data, depth)
+	table.insert(scopeRegistry.SetVariableNodes, {statementIndex, data.Type, data, depth})
+end
+
+ParseHandlers.FunctionStat = function(_, scopeRegistry, statementIndex, data, depth)
+	table.insert(scopeRegistry.CreateFunctionNodes, {statementIndex, data.Type, data, depth})
+end
+ParseHandlers.LocalFunctionStat = ParseHandlers.FunctionStat
+
+ParseHandlers.CallExprStat = function(_, scopeRegistry, statementIndex, data, depth)
+	table.insert(scopeRegistry.CallFunctionNodes, {statementIndex, data.Type, data, depth})
+end
 
 -- // Class // --
 local Class = {}
@@ -22,7 +26,7 @@ Class.__index = Class
 function Class.New()
 	return setmetatable({
 		LastParse = 0,
-		LastScopeRegistry = false,
+		RootScopeRegistry = false,
 		ScopeConnectionMap = {},
 		ScopeRegistries = {},
 	}, Class)
@@ -33,6 +37,10 @@ function Class:Reset()
 	self.ScopeConnectionMap = {}
 	self.ScopeRegistries = {}
 	self.LastParse = 0
+end
+
+function Class:ParseBodyStatement( parentRegistryUUID, BodyArray, depth )
+	
 end
 
 function Class:ParseStatementList(parentRegistryUUID, StatementList, depth)
@@ -63,14 +71,14 @@ function Class:ParseStatementList(parentRegistryUUID, StatementList, depth)
 		local parsed = true
 		if ParseHandlers[data.Type] then
 			print('Parsed ; ', statementIndex, data.Type)
-			ParseHandlers[data.Type](scopeReg, statementIndex, data, depth or 0)
+			ParseHandlers[data.Type](self, scopeReg, statementIndex, data, depth or 0)
 		elseif table.find(SkipTypeList, data.Type) then
 			print('Skipped ; ', data.Type, statementIndex)
 			continue
 		else
 			parsed = false
 		end
-		if data.Body and data.Body.StatementList then
+		if data.Body then
 			parsed = true
 			local envRegistryTable = self:ParseStatementList(currentRegistryUUID, data.Body.StatementList, (depth or 0) + 1)
 			table.insert(scopeReg.ChildScopesIDs, envRegistryTable.ScopeID)
@@ -108,9 +116,20 @@ function Class:OutputParse()
 end
 
 function Class:ParseTokens(tokenDictionary)
+	print(tokenDictionary)
+	local hashName = 'OutputToken_'..sha256(HttpService:JSONEncode(tokenDictionary))
+
+	local outputTokenDictionary = workspace:FindFirstChild(hashName)
+	if not outputTokenDictionary then
+		outputTokenDictionary = Instance.new('StringValue')
+		outputTokenDictionary.Name = hashName
+		outputTokenDictionary.Parent = workspace
+	end
+	outputTokenDictionary.Value = HttpService:JSONEncode(tokenDictionary)
+
 	self:Reset()
 	local rootEnvDictionary = self:ParseStatementList(false, tokenDictionary.StatementList, false)
-	self.LastScopeRegistry = rootEnvDictionary
+	self.RootScopeRegistry = rootEnvDictionary
 	return rootEnvDictionary
 end
 

@@ -8,6 +8,8 @@ local NodeTreeContainer = PluginModules.Classes.NodeTree
 local ScriptENVParser = PluginModules.Classes.ScriptENVParser
 
 local ScriptUtility = PluginModules.Utility.ScriptUtility
+local HashLibUtility = PluginModules.Utility.Hashlib
+local sha256 = HashLibUtility.sha256 :: (string) -> string
 
 local SystemsContainer = {}
 
@@ -25,13 +27,16 @@ function Module:TokenParseSelections()
 	local ScriptInstances = Selection:Get()
 	for _, scriptInstance in ipairs( ScriptInstances ) do
 		if table.find(whitelistClassName, scriptInstance.ClassName) then
-			table.insert(parsedInfoArray, { scriptInstance:GetFullName(), ScriptUtility:RawTokenParse( scriptInstance ) })
+			table.insert(parsedInfoArray, {
+				scriptInstance:GetFullName(),
+				ScriptUtility:RawTokenParse( scriptInstance )
+			})
 		end
 	end
 	return parsedInfoArray
 end
 
-function Module:EnvClassParseTokens(parsedInfoArray, debugPrint)
+function Module:AddEnvParserToParseInfo(parsedInfoArray, debugPrint)
 	for _, t in ipairs( parsedInfoArray ) do
 		local scriptPath, tokenDictionary = unpack(t)
 		local envParser = ScriptENVParser.New()
@@ -46,49 +51,69 @@ function Module:EnvClassParseTokens(parsedInfoArray, debugPrint)
 	return parsedInfoArray
 end
 
-function Module:ParseEnvArraysToNodeJSON(envParserArray)
-	-- { {fullScriptPath, tokenDictionary, envParser} }
-	local nodeArray = {}
+function Module:ParseEnvArraysToNodeJSONs(envParserArray)
+	-- 0 = root stack (global script environment)
+	-- 1 = local scope, depth 1
+	-- 2 = local scope, depth 2
+
+	-- This one creates a flow diagram of all scripts accessing each other (call functions)
+	local GlobalDepthNodeJSONArray = {}
+
+	-- This one creates diagram of invidivual script data
+	local ScriptDepthNodeJSONArray = {}
+
 	for _, t in ipairs( envParserArray ) do
-		local scriptPath, tokenDictionary, envParser = unpack(t)
-		local nodesTable = {}
-		table.insert(nodeArray, {scriptPath, nodesTable})
+		local scriptPath, _, envParserClass = unpack(t)
+
+		local scriptNodeDepthMap = {}
+
+		-- for all call functions
+		print('=============')
+		print(scriptPath, envParserClass)
+		for index, callFunctionNode in ipairs( envParserClass.CallFunctionNodes ) do
+			local statementIndex, dataType, data, depth = unpack(callFunctionNode)
+			print(statementIndex, dataType, data, depth)
+
+			local nodeHashValue = sha256(scriptPath..depth)
+			print(nodeHashValue)
+
+			local nodeData = { ID = nodeHashValue, Layer = depth }
+
+			local localNodeDepthMap = scriptNodeDepthMap[depth]
+			if not localNodeDepthMap then
+				localNodeDepthMap = {}
+				scriptNodeDepthMap[depth] = localNodeDepthMap
+			end
+			table.insert(localNodeDepthMap, nodeData)
+
+			local globalNodeDepthMap = GlobalDepthNodeJSONArray[depth]
+			if not globalNodeDepthMap then
+				globalNodeDepthMap = {}
+				GlobalDepthNodeJSONArray[depth] = globalNodeDepthMap
+			end
+			table.insert(globalNodeDepthMap, nodeData)
+
+			if index > 2 then
+				break
+			end
+		end
+		print('=============')
+
+		-- match node depth with globalDepthMap
+		ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
 	end
-	return nodeArray
-end
 
-function Module:ConvertParseInfoArrayToNodeJSON(parsedInfoArray)
-	local nodeJSONArray = {}
-	--[[
-		{
-			ID = "Test1",
-			Layer = 1,
-			Depends = {"Test1"}
-		}
-
-		:SetData(node_data)
-	]]
-
-	-- SCOPE_VARIABLENAME_VALUETYPE
-
-	local scriptPath, tokenDictionary, envParser = unpack( parsedInfoArray[1] )
-
-	table.insert(nodeJSONArray, {
-		ID = "",
-		Layer = 1,
-		Depends = {},
-	})
-
-	--[[
-	for _, t in ipairs( parsedInfoArray ) do
-		local scriptPath, tokenDictionary, envParser = unpack(t)
-		local fromScriptNodeArray = {}
-
-		-- create each node here for each data point
-
-		table.move(fromScriptNodeArray, 1, #fromScriptNodeArray, #nodeJSONArray, nodeJSONArray)
-	end]]
-	return nodeJSONArray
+	-- put the nodes in the correct layer
+	local IndividualNodeJSONArray = {}
+	local GlobalNodeJSONArray = {}
+	for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
+		nodeData.Layer = layerZ
+	end
+	for layerZ, nodeData in pairs( GlobalNodeJSONArray ) do
+		nodeData.Layer = layerZ
+	end
+	-- return node array { ID = 'string', Depends = {'string', 'string'}, Layer = # }
+	return GlobalNodeJSONArray, IndividualNodeJSONArray
 end
 
 function Module:Show()
@@ -146,9 +171,14 @@ function Module:Init(otherSystems, plugin)
 	TriggerButton.TextScaled = true
 	TriggerButton.Activated:Connect(function()
 		local tokenScriptArray = Module:TokenParseSelections()
-		local tokenNodeJSON = Module:ConvertParseInfoArrayToNodeJSON(tokenScriptArray)
-		local _ = SystemsContainer.FlowDiagram:ParseEnvArraysToNodeJSON(tokenNodeJSON)
-		SystemsContainer.FlowDiagramodule:UpdateTabs()
+		Module:AddEnvParserToParseInfo(tokenScriptArray, false)
+		local GlobalNodeJSONArray, IndividualNodeJSONArrays = Module:ParseEnvArraysToNodeJSONs(tokenScriptArray)
+		print(GlobalNodeJSONArray, IndividualNodeJSONArrays)
+		SystemsContainer.FlowDiagramodule:LoadNodeJSON("Global", GlobalNodeJSONArray)
+		for ScriptPath, NodeArray in ipairs( IndividualNodeJSONArrays ) do
+			SystemsContainer.FlowDiagramodule:LoadNodeJSON(ScriptPath, NodeArray)
+		end
+		SystemsContainer.FlowDiagramodule:UpdateFrames()
 	end)
 
 	local PadUDim = UDim.new(0.05, 0)
