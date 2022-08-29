@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 
 -- // Class // --
 local Class = {}
@@ -28,58 +29,79 @@ function Class:Clear()
 	self.ScopeRegistries = {}
 end
 
-function Class:ParseStatementList( ScopeUUID, StatementList, Depth )
-	--[[
-		print('ParentID: ', parentRegistryUUID)
-		print('Step Depth; ', depth or 0)
+function Class:_ParseFunctionArguments( scopeRegistry, argumentList )
+	print('Parse Function Arguments - List Length: ', #argumentList)
+	-- print(scopeRegistry, argumentList)
+	self:_ParseStatementList(scopeRegistry.ScopeUUID, argumentList, scopeRegistry.Depth + 1)
+end
 
-		local currentRegistryUUID = HttpService:GenerateGUID(false)
+local IgnoreTypes = {'ReturnStat', 'GenericForStat', 'IfStat', 'AssignmentStat 1', 'StringLiteral', 'VargLiteral'}
+function Class:_ParseStatementList( parentUUID, StatementList, Depth )
+	Depth = Depth or 0
+	print('Parent ID: ', parentUUID)
+	print('Step Depth; ', Depth)
 
-		local scopeReg = {
-			ParentScopeUUID = parentRegistryUUID,
-			ScopeID = currentRegistryUUID,
-			ChildScopesIDs = {},
-			SetVariableNodes = {},
-			CreateFunctionNodes = {},
-			CallFunctionNodes = {},
-			Depth = depth,
-		}
+	local newScopeUUID = HttpService:GenerateGUID(false)
+	print('New Scope ID: ', newScopeUUID)
 
-		if self.ScopeConnectionMap[parentRegistryUUID] then
-			table.insert(self.ScopeConnectionMap[parentRegistryUUID], currentRegistryUUID)
-		else
-			self.ScopeConnectionMap[parentRegistryUUID] = {currentRegistryUUID}
+	local ScopeRegistry = {
+		_CreatedFunctions = {},
+		_CreatedVariables = {},
+		_FunctionCalls = {},
+
+		Depth = Depth,
+		ScopeUUID = newScopeUUID,
+		ParentUUID = parentUUID,
+		ChildScopeIDs = {},
+	}
+
+	local parentRegistry = parentUUID and self.ScopeRegistries[parentUUID]
+	if parentRegistry then
+		table.insert(parentRegistry.ChildScopeIDs, newScopeUUID)
+	end
+
+	if self.ScopeConnectionMap[parentUUID] then
+		table.insert(self.ScopeConnectionMap[parentUUID], newScopeUUID)
+	else
+		self.ScopeConnectionMap[parentUUID] = {newScopeUUID}
+	end
+	self.ScopeRegistries[newScopeUUID] = ScopeRegistry
+
+	for statementIndex, statementData in pairs( StatementList ) do
+		print('Parsing ; ', statementIndex, statementData.Type, Depth)
+		if statementData.Type == 'CallExprStat' then
+			-- print(statementData)
+			self:_ParseFunctionArguments( ScopeRegistry, statementData.Expression.FunctionArguments.ArgList )
+		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' then
+			if statementData.FunctionStat then
+				warn('(Local)FunctionStat has a FunctionStat table!')
+				self:_ParseStatementList( newScopeUUID, statementData.FunctionStat.Body.StatementList, Depth + 1 )
+			end
+			if statementData.Body then
+				warn('(Local)FunctionStat has a Body table!')
+				self:_ParseStatementList( newScopeUUID, statementData.Body.StatementList, Depth + 1 )
+			end
+		elseif statementData.Type == 'StatList' then
+			self:_ParseStatementList( newScopeUUID, statementData.StatementList, Depth + 1 )
+		elseif statementData.Type == 'VariableExpr' then
+			warn('Got VariableExpr || ', statementIndex)--, statementData)
+		elseif statementData.Type == 'LocalVarStat' then
+			warn('Got LocalVarStat || ', statementIndex)--, statementData)
+		elseif not table.find(IgnoreTypes, statementData.Type) then
+			warn('Unsupported Type ; ', statementData.Type, ' under scope ', parentUUID)
 		end
+	end
 
-		self.ScopeRegistries[currentRegistryUUID] = scopeReg
-
-		for statementIndex, data in pairs( StatementList ) do
-			local parsed = true
-			if ParseHandlers[data.Type] then
-				print('Parsed ; ', statementIndex, data.Type)
-				ParseHandlers[data.Type](self, scopeReg, statementIndex, data, depth or 0)
-			elseif table.find(SkipTypeList, data.Type) then
-				print('Skipped ; ', data.Type, statementIndex)
-				continue
-			else
-				parsed = false
-			end
-			if data.Body then
-				parsed = true
-				local envRegistryTable = self:ParseStatementList(currentRegistryUUID, data.Body.StatementList, (depth or 0) + 1)
-				table.insert(scopeReg.ChildScopesIDs, envRegistryTable.ScopeID)
-			end
-			if not parsed then
-				warn('Unsupported Type ; ', data.Type, statementIndex)
-			end
-		end
-
-		return scopeReg
-	]]
+	return ScopeRegistry
 end
 
 function Class:ParseTokens(tokenDictionary)
 	self:Clear() -- clear current parsed information
+
+	local rootEnvUUID, rootEnvDictionary = self:_ParseStatementList(false, tokenDictionary.StatementList, false)
+	self.RootRegistryID = rootEnvUUID
+	self.RootRegistryDict = rootEnvDictionary
+
 	--[[
 		print(tokenDictionary)
 		local hashName = 'OutputToken_'..sha256(HttpService:JSONEncode(tokenDictionary))
@@ -91,12 +113,9 @@ function Class:ParseTokens(tokenDictionary)
 			outputTokenDictionary.Parent = workspace
 		end
 		outputTokenDictionary.Value = HttpService:JSONEncode(tokenDictionary)
-
-		self:Reset()
-		local rootEnvDictionary = self:ParseStatementList(false, tokenDictionary.StatementList, false)
-		self.RootScopeRegistry = rootEnvDictionary
-		return rootEnvDictionary
 	]]
+
+	return rootEnvUUID, rootEnvDictionary
 end
 
 function Class:OutputParse()
@@ -137,10 +156,6 @@ function Class:GetFunctionCalls(restrictScopeUUID)
 end
 
 function Class:GetCreatedVariables(restrictScopeUUID)
-	error('Not Implemented')
-end
-
-function Class:GetVariableAssignments(restrictScopeUUID)
 	error('Not Implemented')
 end
 

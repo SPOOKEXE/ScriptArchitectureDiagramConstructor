@@ -52,6 +52,7 @@
 			<int64 name="SourceAssetId">-1</int64>
 			<token name="StreamOutBehavior">0</token>
 			<bool name="StreamingEnabled">false</bool>
+			<token name="StreamingIntegrityMode">0</token>
 			<int name="StreamingMinRadius">64</int>
 			<token name="StreamingPauseMode">0</token>
 			<int name="StreamingTargetRadius">1024</int>
@@ -81,27 +82,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>29.6581402</X>
-					<Y>93.718605</Y>
-					<Z>3.89688277</Z>
-					<R00>-0.145599335</R00>
-					<R01>-0.725613654</R01>
-					<R02>0.672521889</R02>
-					<R10>-7.4505806e-09</R10>
-					<R11>0.679765761</R11>
-					<R12>0.733429313</R12>
-					<R20>-0.989343643</R20>
-					<R21>0.10678681</R21>
-					<R22>-0.0989734381</R22>
+					<X>5.86217022</X>
+					<Y>49.6691208</Y>
+					<Z>25.1200829</Z>
+					<R00>-0.77895087</R00>
+					<R01>-0.552306056</R01>
+					<R02>0.296974033</R02>
+					<R10>-0</R10>
+					<R11>0.473578632</R11>
+					<R12>0.88075155</R12>
+					<R20>-0.62708497</R20>
+					<R21>0.686062157</R21>
+					<R22>-0.368894488</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>28.313097</X>
-					<Y>92.2517471</Y>
-					<Z>4.09482956</Z>
+					<X>5.26822662</X>
+					<Y>47.9076309</Y>
+					<Z>25.8578663</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -7722,6 +7723,625 @@ end
 				</Properties>
 			</Item>
 		</Item>
+		<Item class="Script" referent="RBXC03B991472144016BFF711C5E29834AD">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<bool name="Disabled">true</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Script</string>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{4B47DF6C-1868-411E-AFC3-C6585A9B2074}</string>
+				<ProtectedString name="Source"><![CDATA[
+local function epic(...)
+	print(...)
+end
+
+local function epic2(...)
+	local function work(...)
+		print(...)
+	end
+	work(...)
+end
+
+local function EPic(str1, str2)
+	epic(str1)
+	epic2(str2)
+end
+
+EPic("ep", "ic")
+]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+				<UniqueId name="UniqueId">61d737029f06db31031ca1d200035ab4</UniqueId>
+			</Properties>
+		</Item>
+		<Item class="StringValue" referent="RBXB6DC8CD2D4AB42489BE773EF680C6757">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<string name="Name">OutputToken_54e8aa6e7c93fb393c022b6ae249d69c7c79ba203bd113ec4e3c2c4e871a6c3d</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+				<UniqueId name="UniqueId">61d737029f06db31031ca1d200036545</UniqueId>
+				<string name="Value">{&quot;Type&quot;:&quot;StatList&quot;,&quot;SemicolonList&quot;:[],&quot;StatementList&quot;:[{&quot;FunctionStat&quot;:{&quot;GetFirstToken&quot;:null,&quot;Token_ArgCommaList&quot;:[],&quot;Type&quot;:&quot;FunctionStat&quot;,&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Body&quot;:{&quot;Type&quot;:&quot;StatList&quot;,&quot;SemicolonList&quot;:[],&quot;StatementList&quot;:[{&quot;GetLastToken&quot;:null,&quot;Type&quot;:&quot;CallExprStat&quot;,&quot;GetFirstToken&quot;:null,&quot;Expression&quot;:{&quot;Type&quot;:&quot;CallExpr&quot;,&quot;GetLastToken&quot;:null,&quot;FunctionArguments&quot;:{&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;ArgList&quot;:[{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VargLiteral&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;...&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;GetLastToken&quot;:null}],&quot;CallType&quot;:&quot;ArgCall&quot;,&quot;Token_CommaList&quot;:[],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null,&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}},&quot;GetFirstToken&quot;:null,&quot;Base&quot;:{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;print&quot;,&quot;LeadingWhite&quot;:&quot;\n\t&quot;},&quot;GetLastToken&quot;:null}}}],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},&quot;ArgList&quot;:[],&quot;Token_Varg&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;...&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Token_End&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;end&quot;,&quot;LeadingWhite&quot;:&quot;\n&quot;},&quot;GetLastToken&quot;:null,&quot;Token_Function&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;function&quot;,&quot;LeadingWhite&quot;:&quot; &quot;},&quot;NameChain&quot;:[{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;epic&quot;,&quot;LeadingWhite&quot;:&quot; &quot;}],&quot;ArgTypeList&quot;:[],&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Token_NameChainSeparator&quot;:[],&quot;Token_ArgColonList&quot;:[]},&quot;Type&quot;:&quot;LocalFunctionStat&quot;,&quot;Token_Local&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;local&quot;,&quot;LeadingWhite&quot;:&quot;\n&quot;},&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},{&quot;FunctionStat&quot;:{&quot;GetFirstToken&quot;:null,&quot;Token_ArgCommaList&quot;:[],&quot;Type&quot;:&quot;FunctionStat&quot;,&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Body&quot;:{&quot;Type&quot;:&quot;StatList&quot;,&quot;SemicolonList&quot;:[],&quot;StatementList&quot;:[{&quot;FunctionStat&quot;:{&quot;GetFirstToken&quot;:null,&quot;Token_ArgCommaList&quot;:[],&quot;Type&quot;:&quot;FunctionStat&quot;,&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Body&quot;:{&quot;Type&quot;:&quot;StatList&quot;,&quot;SemicolonList&quot;:[],&quot;StatementList&quot;:[{&quot;GetLastToken&quot;:null,&quot;Type&quot;:&quot;CallExprStat&quot;,&quot;GetFirstToken&quot;:null,&quot;Expression&quot;:{&quot;Type&quot;:&quot;CallExpr&quot;,&quot;GetLastToken&quot;:null,&quot;FunctionArguments&quot;:{&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;ArgList&quot;:[{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VargLiteral&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;...&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;GetLastToken&quot;:null}],&quot;CallType&quot;:&quot;ArgCall&quot;,&quot;Token_CommaList&quot;:[],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null,&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}},&quot;GetFirstToken&quot;:null,&quot;Base&quot;:{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;print&quot;,&quot;LeadingWhite&quot;:&quot;\n\t\t&quot;},&quot;GetLastToken&quot;:null}}}],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},&quot;ArgList&quot;:[],&quot;Token_Varg&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;...&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Token_End&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;end&quot;,&quot;LeadingWhite&quot;:&quot;\n\t&quot;},&quot;GetLastToken&quot;:null,&quot;Token_Function&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;function&quot;,&quot;LeadingWhite&quot;:&quot; &quot;},&quot;NameChain&quot;:[{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;work&quot;,&quot;LeadingWhite&quot;:&quot; &quot;}],&quot;ArgTypeList&quot;:[],&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Token_NameChainSeparator&quot;:[],&quot;Token_ArgColonList&quot;:[]},&quot;Type&quot;:&quot;LocalFunctionStat&quot;,&quot;Token_Local&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;local&quot;,&quot;LeadingWhite&quot;:&quot;\n\t&quot;},&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},{&quot;GetLastToken&quot;:null,&quot;Type&quot;:&quot;CallExprStat&quot;,&quot;GetFirstToken&quot;:null,&quot;Expression&quot;:{&quot;Type&quot;:&quot;CallExpr&quot;,&quot;GetLastToken&quot;:null,&quot;FunctionArguments&quot;:{&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;ArgList&quot;:[{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VargLiteral&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;...&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;GetLastToken&quot;:null}],&quot;CallType&quot;:&quot;ArgCall&quot;,&quot;Token_CommaList&quot;:[],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null,&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}},&quot;GetFirstToken&quot;:null,&quot;Base&quot;:{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;work&quot;,&quot;LeadingWhite&quot;:&quot;\n\t&quot;},&quot;GetLastToken&quot;:null}}}],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},&quot;ArgList&quot;:[],&quot;Token_Varg&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;...&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Token_End&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;end&quot;,&quot;LeadingWhite&quot;:&quot;\n&quot;},&quot;GetLastToken&quot;:null,&quot;Token_Function&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;function&quot;,&quot;LeadingWhite&quot;:&quot; &quot;},&quot;NameChain&quot;:[{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;epic2&quot;,&quot;LeadingWhite&quot;:&quot; &quot;}],&quot;ArgTypeList&quot;:[],&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Token_NameChainSeparator&quot;:[],&quot;Token_ArgColonList&quot;:[]},&quot;Type&quot;:&quot;LocalFunctionStat&quot;,&quot;Token_Local&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;local&quot;,&quot;LeadingWhite&quot;:&quot;\n\n&quot;},&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},{&quot;FunctionStat&quot;:{&quot;GetFirstToken&quot;:null,&quot;Token_ArgCommaList&quot;:[{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;,&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}],&quot;Type&quot;:&quot;FunctionStat&quot;,&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Body&quot;:{&quot;Type&quot;:&quot;StatList&quot;,&quot;SemicolonList&quot;:[],&quot;StatementList&quot;:[{&quot;GetLastToken&quot;:null,&quot;Type&quot;:&quot;CallExprStat&quot;,&quot;GetFirstToken&quot;:null,&quot;Expression&quot;:{&quot;Type&quot;:&quot;CallExpr&quot;,&quot;GetLastToken&quot;:null,&quot;FunctionArguments&quot;:{&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;ArgList&quot;:[{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;str1&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;GetLastToken&quot;:null}],&quot;CallType&quot;:&quot;ArgCall&quot;,&quot;Token_CommaList&quot;:[],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null,&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}},&quot;GetFirstToken&quot;:null,&quot;Base&quot;:{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;epic&quot;,&quot;LeadingWhite&quot;:&quot;\n\t&quot;},&quot;GetLastToken&quot;:null}}},{&quot;GetLastToken&quot;:null,&quot;Type&quot;:&quot;CallExprStat&quot;,&quot;GetFirstToken&quot;:null,&quot;Expression&quot;:{&quot;Type&quot;:&quot;CallExpr&quot;,&quot;GetLastToken&quot;:null,&quot;FunctionArguments&quot;:{&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;ArgList&quot;:[{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;str2&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;GetLastToken&quot;:null}],&quot;CallType&quot;:&quot;ArgCall&quot;,&quot;Token_CommaList&quot;:[],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null,&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}},&quot;GetFirstToken&quot;:null,&quot;Base&quot;:{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;epic2&quot;,&quot;LeadingWhite&quot;:&quot;\n\t&quot;},&quot;GetLastToken&quot;:null}}}],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},&quot;Token_Function&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;function&quot;,&quot;LeadingWhite&quot;:&quot; &quot;},&quot;ArgList&quot;:[{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;str1&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;str2&quot;,&quot;LeadingWhite&quot;:&quot; &quot;}],&quot;Token_End&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;end&quot;,&quot;LeadingWhite&quot;:&quot;\n&quot;},&quot;GetLastToken&quot;:null,&quot;NameChain&quot;:[{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;EPic&quot;,&quot;LeadingWhite&quot;:&quot; &quot;}],&quot;ArgTypeList&quot;:[],&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;Token_NameChainSeparator&quot;:[],&quot;Token_ArgColonList&quot;:[]},&quot;Type&quot;:&quot;LocalFunctionStat&quot;,&quot;Token_Local&quot;:{&quot;Type&quot;:&quot;Keyword&quot;,&quot;Source&quot;:&quot;local&quot;,&quot;LeadingWhite&quot;:&quot;\n\n&quot;},&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null},{&quot;GetLastToken&quot;:null,&quot;Type&quot;:&quot;CallExprStat&quot;,&quot;GetFirstToken&quot;:null,&quot;Expression&quot;:{&quot;Type&quot;:&quot;CallExpr&quot;,&quot;GetLastToken&quot;:null,&quot;FunctionArguments&quot;:{&quot;Token_OpenParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;(&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;ArgList&quot;:[{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;StringLiteral&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;String&quot;,&quot;Source&quot;:&quot;\&quot;ep\&quot;&quot;,&quot;LeadingWhite&quot;:&quot;&quot;},&quot;GetLastToken&quot;:null},{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;StringLiteral&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;String&quot;,&quot;Source&quot;:&quot;\&quot;ic\&quot;&quot;,&quot;LeadingWhite&quot;:&quot; &quot;},&quot;GetLastToken&quot;:null}],&quot;CallType&quot;:&quot;ArgCall&quot;,&quot;Token_CommaList&quot;:[{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;,&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null,&quot;Token_CloseParen&quot;:{&quot;Type&quot;:&quot;Symbol&quot;,&quot;Source&quot;:&quot;)&quot;,&quot;LeadingWhite&quot;:&quot;&quot;}},&quot;GetFirstToken&quot;:null,&quot;Base&quot;:{&quot;GetFirstToken&quot;:null,&quot;Type&quot;:&quot;VariableExpr&quot;,&quot;Token&quot;:{&quot;Type&quot;:&quot;Ident&quot;,&quot;Source&quot;:&quot;EPic&quot;,&quot;LeadingWhite&quot;:&quot;\n\n&quot;},&quot;GetLastToken&quot;:null}}}],&quot;GetLastToken&quot;:null,&quot;GetFirstToken&quot;:null}</string>
+			</Properties>
+		</Item>
+		<Item class="Script" referent="RBXE9A40CBAEF9346298607B55FC34289F7">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<bool name="Disabled">true</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Script_json</string>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{7F510F70-C0E5-4924-A5CD-4EB7210B1D53}</string>
+				<ProtectedString name="Source"><![CDATA[return {
+	["Type"] = "StatList",
+	["SemicolonList"] = {},
+	["StatementList"] = {
+	{
+		["FunctionStat"] = {
+			["GetFirstToken"] = nil,
+			["Token_ArgCommaList"] = {},
+			["Type"] = "FunctionStat",
+			["Token_OpenParen"] = {
+				["Type"] = "Symbol",
+				["Source"] = "(",
+				["LeadingWhite"] = ""
+			},
+			["Body"] = {
+				["Type"] = "StatList",
+				["SemicolonList"] = {},
+				["StatementList"] = {
+				{
+					["GetLastToken"] = nil,
+					["Type"] = "CallExprStat",
+					["GetFirstToken"] = nil,
+					["Expression"] = {
+						["Type"] = "CallExpr",
+						["GetLastToken"] = nil,
+						["FunctionArguments"] = {
+							["Token_OpenParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = "(",
+								["LeadingWhite"] = ""
+							},
+							["ArgList"] = {
+								{
+									["GetFirstToken"] = nil,
+									["Type"] = "VargLiteral",
+									["Token"] = {
+										["Type"] = "Symbol",
+										["Source"] = "...",
+										["LeadingWhite"] = ""
+									},
+									["GetLastToken"] = nil
+								}
+							},
+							["CallType"] = "ArgCall",
+							["Token_CommaList"] = {},
+							["GetLastToken"] = nil,
+							["GetFirstToken"] = nil,
+							["Token_CloseParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = ")",
+								["LeadingWhite"] = ""
+							}
+						},
+						["GetFirstToken"] = nil,
+						["Base"] = {
+							["GetFirstToken"] = nil,
+							["Type"] = "VariableExpr",
+							["Token"] = {
+								["Type"] = "Ident",
+								["Source"] = "print",
+								["LeadingWhite"] = "\n\t"
+							},
+							["GetLastToken"] = nil
+						}
+					}
+				}
+				],
+				["GetLastToken"] = nil,
+				["GetFirstToken"] = nil
+			},
+			["ArgList"] = {},
+			["Token_Varg"] = {
+				["Type"] = "Symbol",
+				["Source"] = "...",
+				["LeadingWhite"] = ""
+			},
+			["Token_End"] = {
+				["Type"] = "Keyword",
+				["Source"] = "end",
+				["LeadingWhite"] = "\n"
+			},
+			["GetLastToken"] = nil,
+			["Token_Function"] = {
+				["Type"] = "Keyword",
+				["Source"] = "function",
+				["LeadingWhite"] = " "
+			},
+			["NameChain"] = {
+			{
+				["Type"] = "Ident",
+				["Source"] = "epic",
+				["LeadingWhite"] = " "
+			}
+			],
+			["ArgTypeList"] = {},
+			["Token_CloseParen"] = {
+				["Type"] = "Symbol",
+				["Source"] = ")",
+				["LeadingWhite"] = ""
+			},
+			["Token_NameChainSeparator"] = {},
+			["Token_ArgColonList"] = {}
+		},
+		["Type"] = "LocalFunctionStat",
+		["Token_Local"] = {
+			["Type"] = "Keyword",
+			["Source"] = "local",
+			["LeadingWhite"] = "\n"
+		},
+		["GetLastToken"] = nil,
+		["GetFirstToken"] = nil
+	},
+	{
+		["FunctionStat"] = {
+			["GetFirstToken"] = nil,
+			["Token_ArgCommaList"] = {},
+			["Type"] = "FunctionStat",
+			["Token_OpenParen"] = {
+				["Type"] = "Symbol",
+				["Source"] = "(",
+				["LeadingWhite"] = ""
+			},
+			["Body"] = {
+				["Type"] = "StatList",
+				["SemicolonList"] = {},
+				["StatementList"] = {
+				{
+					["FunctionStat"] = {
+						["GetFirstToken"] = nil,
+						["Token_ArgCommaList"] = {},
+						["Type"] = "FunctionStat",
+						["Token_OpenParen"] = {
+							["Type"] = "Symbol",
+							["Source"] = "(",
+							["LeadingWhite"] = ""
+						},
+						["Body"] = {
+							["Type"] = "StatList",
+							["SemicolonList"] = {},
+							["StatementList"] = {
+							{
+								["GetLastToken"] = nil,
+								["Type"] = "CallExprStat",
+								["GetFirstToken"] = nil,
+								["Expression"] = {
+									["Type"] = "CallExpr",
+									["GetLastToken"] = nil,
+									["FunctionArguments"] = {
+										["Token_OpenParen"] = {
+											["Type"] = "Symbol",
+											["Source"] = "(",
+											["LeadingWhite"] = ""
+										},
+										["ArgList"] = {
+										{
+											["GetFirstToken"] = nil,
+											["Type"] = "VargLiteral",
+											["Token"] = {
+												["Type"] = "Symbol",
+												["Source"] = "...",
+												["LeadingWhite"] = ""
+											},
+											["GetLastToken"] = nil
+										}
+										],
+										["CallType"] = "ArgCall",
+										["Token_CommaList"] = {},
+										["GetLastToken"] = nil,
+										["GetFirstToken"] = nil,
+										["Token_CloseParen"] = {
+											["Type"] = "Symbol",
+											["Source"] = ")",
+											["LeadingWhite"] = ""
+										}
+									},
+									["GetFirstToken"] = nil,
+									["Base"] = {
+										["GetFirstToken"] = nil,
+										["Type"] = "VariableExpr",
+										["Token"] = {
+											["Type"] = "Ident",
+											["Source"] = "print",
+											["LeadingWhite"] = "\n\t\t"
+										},
+										["GetLastToken"] = nil
+									}
+								}
+							}
+							],
+							["GetLastToken"] = nil,
+							["GetFirstToken"] = nil
+						},
+						["ArgList"] = {},
+						["Token_Varg"] = {
+							["Type"] = "Symbol",
+							["Source"] = "...",
+							["LeadingWhite"] = ""
+						},
+						["Token_End"] = {
+							["Type"] = "Keyword",
+							["Source"] = "end",
+							["LeadingWhite"] = "\n\t"
+						},
+						["GetLastToken"] = nil,
+						["Token_Function"] = {
+							["Type"] = "Keyword",
+							["Source"] = "function",
+							["LeadingWhite"] = " "
+						},
+						["NameChain"] = {
+						{
+							["Type"] = "Ident",
+							["Source"] = "work",
+							["LeadingWhite"] = " "
+						}
+						],
+						["ArgTypeList"] = {},
+						["Token_CloseParen"] = {
+							["Type"] = "Symbol",
+							["Source"] = ")",
+							["LeadingWhite"] = ""
+						},
+						["Token_NameChainSeparator"] = {},
+						["Token_ArgColonList"] = {}
+					},
+					["Type"] = "LocalFunctionStat",
+					["Token_Local"] = {
+						["Type"] = "Keyword",
+						["Source"] = "local",
+						["LeadingWhite"] = "\n\t"
+					},
+					["GetLastToken"] = nil,
+					["GetFirstToken"] = nil
+				},
+				{
+					["GetLastToken"] = nil,
+					["Type"] = "CallExprStat",
+					["GetFirstToken"] = nil,
+					["Expression"] = {
+						["Type"] = "CallExpr",
+						["GetLastToken"] = nil,
+						["FunctionArguments"] = {
+							["Token_OpenParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = "(",
+								["LeadingWhite"] = ""
+							},
+							["ArgList"] = {
+							{
+								["GetFirstToken"] = nil,
+								["Type"] = "VargLiteral",
+								["Token"] = {
+									["Type"] = "Symbol",
+									["Source"] = "...",
+									["LeadingWhite"] = ""
+								},
+								["GetLastToken"] = nil
+							}
+							],
+							["CallType"] = "ArgCall",
+							["Token_CommaList"] = {},
+							["GetLastToken"] = nil,
+							["GetFirstToken"] = nil,
+							["Token_CloseParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = ")",
+								["LeadingWhite"] = ""
+							}
+						},
+						["GetFirstToken"] = nil,
+						["Base"] = {
+							["GetFirstToken"] = nil,
+							["Type"] = "VariableExpr",
+							["Token"] = {
+								["Type"] = "Ident",
+								["Source"] = "work",
+								["LeadingWhite"] = "\n\t"
+							},
+							["GetLastToken"] = nil
+						}
+					}
+				}
+				],
+				["GetLastToken"] = nil,
+				["GetFirstToken"] = nil
+			},
+			["ArgList"] = {},
+			["Token_Varg"] = {
+				["Type"] = "Symbol",
+				["Source"] = "...",
+				["LeadingWhite"] = ""
+			},
+			["Token_End"] = {
+				["Type"] = "Keyword",
+				["Source"] = "end",
+				["LeadingWhite"] = "\n"
+			},
+			["GetLastToken"] = nil,
+			["Token_Function"] = {
+				["Type"] = "Keyword",
+				["Source"] = "function",
+				["LeadingWhite"] = " "
+			},
+			["NameChain"] = {
+			{
+				["Type"] = "Ident",
+				["Source"] = "epic2",
+				["LeadingWhite"] = " "
+			}
+			],
+			["ArgTypeList"] = {},
+			["Token_CloseParen"] = {
+				["Type"] = "Symbol",
+				["Source"] = ")",
+				["LeadingWhite"] = ""
+			},
+			["Token_NameChainSeparator"] = {},
+			["Token_ArgColonList"] = {}
+		},
+		["Type"] = "LocalFunctionStat",
+		["Token_Local"] = {
+			["Type"] = "Keyword",
+			["Source"] = "local",
+			["LeadingWhite"] = "\n\n"
+		},
+		["GetLastToken"] = nil,
+		["GetFirstToken"] = nil
+	},
+	{
+		["FunctionStat"] = {
+			["GetFirstToken"] = nil,
+			["Token_ArgCommaList"] = {
+			{
+				["Type"] = "Symbol",
+				["Source"] = ",",
+				["LeadingWhite"] = ""
+			}
+			],
+			["Type"] = "FunctionStat",
+			["Token_OpenParen"] = {
+				["Type"] = "Symbol",
+				["Source"] = "(",
+				["LeadingWhite"] = ""
+			},
+			["Body"] = {
+				["Type"] = "StatList",
+				["SemicolonList"] = {},
+				["StatementList"] = {
+				{
+					["GetLastToken"] = nil,
+					["Type"] = "CallExprStat",
+					["GetFirstToken"] = nil,
+					["Expression"] = {
+						["Type"] = "CallExpr",
+						["GetLastToken"] = nil,
+						["FunctionArguments"] = {
+							["Token_OpenParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = "(",
+								["LeadingWhite"] = ""
+							},
+							["ArgList"] = {
+							{
+								["GetFirstToken"] = nil,
+								["Type"] = "VariableExpr",
+								["Token"] = {
+									["Type"] = "Ident",
+									["Source"] = "str1",
+									["LeadingWhite"] = ""
+								},
+								["GetLastToken"] = nil
+							}
+							],
+							["CallType"] = "ArgCall",
+							["Token_CommaList"] = {},
+							["GetLastToken"] = nil,
+							["GetFirstToken"] = nil,
+							["Token_CloseParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = ")",
+								["LeadingWhite"] = ""
+							}
+						},
+						["GetFirstToken"] = nil,
+						["Base"] = {
+							["GetFirstToken"] = nil,
+							["Type"] = "VariableExpr",
+							["Token"] = {
+								["Type"] = "Ident",
+								["Source"] = "epic",
+								["LeadingWhite"] = "\n\t"
+							},
+							["GetLastToken"] = nil
+						}
+					}
+				},
+				{
+					["GetLastToken"] = nil,
+					["Type"] = "CallExprStat",
+					["GetFirstToken"] = nil,
+					["Expression"] = {
+						["Type"] = "CallExpr",
+						["GetLastToken"] = nil,
+						["FunctionArguments"] = {
+							["Token_OpenParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = "(",
+								["LeadingWhite"] = ""
+							},
+							["ArgList"] = {
+							{
+								["GetFirstToken"] = nil,
+								["Type"] = "VariableExpr",
+								["Token"] = {
+									["Type"] = "Ident",
+									["Source"] = "str2",
+									["LeadingWhite"] = ""
+								},
+								["GetLastToken"] = nil
+							}
+							],
+							["CallType"] = "ArgCall",
+							["Token_CommaList"] = {},
+							["GetLastToken"] = nil,
+							["GetFirstToken"] = nil,
+							["Token_CloseParen"] = {
+								["Type"] = "Symbol",
+								["Source"] = ")",
+								["LeadingWhite"] = ""
+							}
+						},
+						["GetFirstToken"] = nil,
+						["Base"] = {
+							["GetFirstToken"] = nil,
+							["Type"] = "VariableExpr",
+							["Token"] = {
+								["Type"] = "Ident",
+								["Source"] = "epic2",
+								["LeadingWhite"] = "\n\t"
+							},
+							["GetLastToken"] = nil
+						}
+					}
+				}
+				],
+				["GetLastToken"] = nil,
+				["GetFirstToken"] = nil
+			},
+			["Token_Function"] = {
+				["Type"] = "Keyword",
+				["Source"] = "function",
+				["LeadingWhite"] = " "
+			},
+			["ArgList"] = {
+			{
+				["Type"] = "Ident",
+				["Source"] = "str1",
+				["LeadingWhite"] = ""
+			},
+			{
+				["Type"] = "Ident",
+				["Source"] = "str2",
+				["LeadingWhite"] = " "
+			}
+			],
+			["Token_End"] = {
+				["Type"] = "Keyword",
+				["Source"] = "end",
+				["LeadingWhite"] = "\n"
+			},
+			["GetLastToken"] = nil,
+			["NameChain"] = {
+			{
+				["Type"] = "Ident",
+				["Source"] = "EPic",
+				["LeadingWhite"] = " "
+			}
+			],
+			["ArgTypeList"] = {},
+			["Token_CloseParen"] = {
+				["Type"] = "Symbol",
+				["Source"] = ")",
+				["LeadingWhite"] = ""
+			},
+			["Token_NameChainSeparator"] = {},
+			["Token_ArgColonList"] = {}
+		},
+		["Type"] = "LocalFunctionStat",
+		["Token_Local"] = {
+			["Type"] = "Keyword",
+			["Source"] = "local",
+			["LeadingWhite"] = "\n\n"
+		},
+		["GetLastToken"] = nil,
+		["GetFirstToken"] = nil
+	},
+	{
+		["GetLastToken"] = nil,
+		["Type"] = "CallExprStat",
+		["GetFirstToken"] = nil,
+		["Expression"] = {
+			["Type"] = "CallExpr",
+			["GetLastToken"] = nil,
+			["FunctionArguments"] = {
+				["Token_OpenParen"] = {
+					["Type"] = "Symbol",
+					["Source"] = "(",
+					["LeadingWhite"] = ""
+				},
+				["ArgList"] = {
+				{
+					["GetFirstToken"] = nil,
+					["Type"] = "StringLiteral",
+					["Token"] = {
+						["Type"] = "String",
+						["Source"] = "\"ep\"",
+						["LeadingWhite"] = ""
+					},
+					["GetLastToken"] = nil
+				},
+				{
+					["GetFirstToken"] = nil,
+					["Type"] = "StringLiteral",
+					["Token"] = {
+						["Type"] = "String",
+						["Source"] = "\"ic\"",
+						["LeadingWhite"] = " "
+					},
+					["GetLastToken"] = nil
+				}
+				],
+				["CallType"] = "ArgCall",
+				["Token_CommaList"] = {
+				{
+					["Type"] = "Symbol",
+					["Source"] = ",",
+					["LeadingWhite"] = ""
+				}
+				],
+				["GetLastToken"] = nil,
+				["GetFirstToken"] = nil,
+				["Token_CloseParen"] = {
+					["Type"] = "Symbol",
+					["Source"] = ")",
+					["LeadingWhite"] = ""
+				}
+			},
+			["GetFirstToken"] = nil,
+			["Base"] = {
+				["GetFirstToken"] = nil,
+				["Type"] = "VariableExpr",
+				["Token"] = {
+					["Type"] = "Ident",
+					["Source"] = "EPic",
+					["LeadingWhite"] = "\n\n"
+				},
+				["GetLastToken"] = nil
+			}
+		}
+	}
+	],
+	["GetLastToken"] = nil,
+	["GetFirstToken"] = nil
+}]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+				<UniqueId name="UniqueId">61d737029f06db31031ca1d200036916</UniqueId>
+			</Properties>
+		</Item>
 	</Item>
 	<Item class="SoundService" referent="RBX85EC805AA1E043DFA84651589E1E30BB">
 		<Properties>
@@ -10613,7 +11233,6 @@ TreeData.__index = TreeData
 function TreeData.New()
 	return setmetatable({
 		name = "Unknown",
-		visible = false,
 		nodes = {},
 		IDToNode = {},
 		LayerZToNodeArray = {},
@@ -10709,20 +11328,24 @@ return { Node = Node, TreeData = TreeData }
 							<string name="ScriptGuid">{158CADA1-F5F2-4998-9346-24EC78269B55}</string>
 							<ProtectedString name="Source"><![CDATA[
 local HttpService = game:GetService('HttpService')
+local sha256 = require(script.Parent.Parent.Utility.Hashlib).sha256
 
 local SkipTypeList = {'ReturnStat', 'GenericForStat', 'IfStat', 'AssignmentStat 1'}
 
-local ParseHandlers = {
-	LocalVarStat = function(scopeRegistry, statementIndex, data, depth)
-		table.insert(scopeRegistry.SetVariableNodes, {statementIndex, data.Type, data, depth})
-	end,
-	FunctionStat = function(scopeRegistry, statementIndex, data, depth)
-		table.insert(scopeRegistry.CreateFunctionNodes, {statementIndex, data.Type, data, depth})
-	end,
-	CallExprStat = function(scopeRegistry, statementIndex, data, depth)
-		table.insert(scopeRegistry.CallFunctionNodes, {statementIndex, data.Type, data, depth})
-	end,
-}
+local ParseHandlers = {}
+
+ParseHandlers.LocalVarStat = function(_, scopeRegistry, statementIndex, data, depth)
+	table.insert(scopeRegistry.SetVariableNodes, {statementIndex, data.Type, data, depth})
+end
+
+ParseHandlers.FunctionStat = function(_, scopeRegistry, statementIndex, data, depth)
+	table.insert(scopeRegistry.CreateFunctionNodes, {statementIndex, data.Type, data, depth})
+end
+ParseHandlers.LocalFunctionStat = ParseHandlers.FunctionStat
+
+ParseHandlers.CallExprStat = function(_, scopeRegistry, statementIndex, data, depth)
+	table.insert(scopeRegistry.CallFunctionNodes, {statementIndex, data.Type, data, depth})
+end
 
 -- // Class // --
 local Class = {}
@@ -10742,6 +11365,10 @@ function Class:Reset()
 	self.ScopeConnectionMap = {}
 	self.ScopeRegistries = {}
 	self.LastParse = 0
+end
+
+function Class:ParseBodyStatement( parentRegistryUUID, BodyArray, depth )
+	
 end
 
 function Class:ParseStatementList(parentRegistryUUID, StatementList, depth)
@@ -10772,14 +11399,14 @@ function Class:ParseStatementList(parentRegistryUUID, StatementList, depth)
 		local parsed = true
 		if ParseHandlers[data.Type] then
 			print('Parsed ; ', statementIndex, data.Type)
-			ParseHandlers[data.Type](scopeReg, statementIndex, data, depth or 0)
+			ParseHandlers[data.Type](self, scopeReg, statementIndex, data, depth or 0)
 		elseif table.find(SkipTypeList, data.Type) then
 			print('Skipped ; ', data.Type, statementIndex)
 			continue
 		else
 			parsed = false
 		end
-		if data.Body and data.Body.StatementList then
+		if data.Body then
 			parsed = true
 			local envRegistryTable = self:ParseStatementList(currentRegistryUUID, data.Body.StatementList, (depth or 0) + 1)
 			table.insert(scopeReg.ChildScopesIDs, envRegistryTable.ScopeID)
@@ -10817,6 +11444,17 @@ function Class:OutputParse()
 end
 
 function Class:ParseTokens(tokenDictionary)
+	print(tokenDictionary)
+	local hashName = 'OutputToken_'..sha256(HttpService:JSONEncode(tokenDictionary))
+
+	local outputTokenDictionary = workspace:FindFirstChild(hashName)
+	if not outputTokenDictionary then
+		outputTokenDictionary = Instance.new('StringValue')
+		outputTokenDictionary.Name = hashName
+		outputTokenDictionary.Parent = workspace
+	end
+	outputTokenDictionary.Value = HttpService:JSONEncode(tokenDictionary)
+
 	self:Reset()
 	local rootEnvDictionary = self:ParseStatementList(false, tokenDictionary.StatementList, false)
 	self.RootScopeRegistry = rootEnvDictionary
@@ -10857,6 +11495,209 @@ return Class]]></ProtectedString>
 							<int64 name="SourceAssetId">-1</int64>
 							<BinaryString name="Tags"></BinaryString>
 							<UniqueId name="UniqueId">310dd1710dcb8bab030416e9000307a2</UniqueId>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX482F22EEEF50478EB812F835BC88472F">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">ScriptTokenParser</string>
+							<string name="ScriptGuid">{121E594C-DE8B-4AB7-B3E0-3DD3D2D94A94}</string>
+							<ProtectedString name="Source"><![CDATA[local HttpService = game:GetService("HttpService")
+
+-- // Class // --
+local Class = {}
+Class.__index = Class
+Class.__tostring = function(self)
+	local registryCount = 0
+	for _, _ in pairs(self.ScopeRegistries ) do
+		registryCount += 1
+	end
+	return string.format('TokenParser [ ScopeRegistries %s ]', registryCount)
+end
+
+function Class.New()
+	return setmetatable({
+		RootRegistryID = false, -- root scope id
+		RootRegistryDict = false, -- root scope
+
+		ScopeConnectionMap = false, -- how scopes interconnect
+		ScopeRegistries = false, -- each individual scope
+	}, Class)
+end
+
+-- // CORE METHODS // --
+function Class:Clear()
+	self.RootRegistryID = false
+	self.RootRegistryDict = false
+	self.ScopeConnectionMap = {}
+	self.ScopeRegistries = {}
+end
+
+function Class:_ParseFunctionArguments( scopeRegistry, argumentList )
+	print('Parse Function Arguments - List Length: ', #argumentList)
+	-- print(scopeRegistry, argumentList)
+	self:_ParseStatementList(scopeRegistry.ScopeUUID, argumentList, scopeRegistry.Depth + 1)
+end
+
+local IgnoreTypes = {'ReturnStat', 'GenericForStat', 'IfStat', 'AssignmentStat 1', 'StringLiteral', 'VargLiteral'}
+function Class:_ParseStatementList( parentUUID, StatementList, Depth )
+	Depth = Depth or 0
+	print('Parent ID: ', parentUUID)
+	print('Step Depth; ', Depth)
+
+	local newScopeUUID = HttpService:GenerateGUID(false)
+	print('New Scope ID: ', newScopeUUID)
+
+	local ScopeRegistry = {
+		_CreatedFunctions = {},
+		_CreatedVariables = {},
+		_FunctionCalls = {},
+
+		Depth = Depth,
+		ScopeUUID = newScopeUUID,
+		ParentUUID = parentUUID,
+		ChildScopeIDs = {},
+	}
+
+	local parentRegistry = parentUUID and self.ScopeRegistries[parentUUID]
+	if parentRegistry then
+		table.insert(parentRegistry.ChildScopeIDs, newScopeUUID)
+	end
+
+	if self.ScopeConnectionMap[parentUUID] then
+		table.insert(self.ScopeConnectionMap[parentUUID], newScopeUUID)
+	else
+		self.ScopeConnectionMap[parentUUID] = {newScopeUUID}
+	end
+	self.ScopeRegistries[newScopeUUID] = ScopeRegistry
+
+	for statementIndex, statementData in pairs( StatementList ) do
+		print('Parsing ; ', statementIndex, statementData.Type, Depth)
+		if statementData.Type == 'CallExprStat' then
+			-- print(statementData)
+			self:_ParseFunctionArguments( ScopeRegistry, statementData.Expression.FunctionArguments.ArgList )
+		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' then
+			if statementData.FunctionStat then
+				warn('(Local)FunctionStat has a FunctionStat table!')
+				self:_ParseStatementList( newScopeUUID, statementData.FunctionStat.Body.StatementList, Depth + 1 )
+			end
+			if statementData.Body then
+				warn('(Local)FunctionStat has a Body table!')
+				self:_ParseStatementList( newScopeUUID, statementData.Body.StatementList, Depth + 1 )
+			end
+		elseif statementData.Type == 'StatList' then
+			self:_ParseStatementList( newScopeUUID, statementData.StatementList, Depth + 1 )
+		elseif statementData.Type == 'VariableExpr' then
+			warn('Got VariableExpr || ', statementIndex)--, statementData)
+		elseif statementData.Type == 'LocalVarStat' then
+			warn('Got LocalVarStat || ', statementIndex)--, statementData)
+		elseif not table.find(IgnoreTypes, statementData.Type) then
+			warn('Unsupported Type ; ', statementData.Type, ' under scope ', parentUUID)
+		end
+	end
+
+	return ScopeRegistry
+end
+
+function Class:ParseTokens(tokenDictionary)
+	self:Clear() -- clear current parsed information
+
+	local rootEnvUUID, rootEnvDictionary = self:_ParseStatementList(false, tokenDictionary.StatementList, false)
+	self.RootRegistryID = rootEnvUUID
+	self.RootRegistryDict = rootEnvDictionary
+
+	--[[
+		print(tokenDictionary)
+		local hashName = 'OutputToken_'..sha256(HttpService:JSONEncode(tokenDictionary))
+
+		local outputTokenDictionary = workspace:FindFirstChild(hashName)
+		if not outputTokenDictionary then
+			outputTokenDictionary = Instance.new('StringValue')
+			outputTokenDictionary.Name = hashName
+			outputTokenDictionary.Parent = workspace
+		end
+		outputTokenDictionary.Value = HttpService:JSONEncode(tokenDictionary)
+	]]
+
+	return rootEnvUUID, rootEnvDictionary
+end
+
+function Class:OutputParse()
+	print(string.rep('\n', 2))
+	local baseRegistryString = 'REGISTRY %s DEPTH %d || CALL FUNCTIONS (%d), CREATE FUNCTIONS (%d), SET VARIABLES (%d), CHANGED VARIABLES (%d)'
+	for registryUUID, scopeData in pairs( self.ScopeRegistries ) do
+		local createdFunctions = self:GetCreatedFunctions(registryUUID)
+		local functionCalls = self:GetFunctionCalls(registryUUID)
+		local createdVariable = self:GetCreatedVariables(registryUUID)
+		local variableAssignments = self:GetVariableAssignments(registryUUID)
+		print(string.format(
+			baseRegistryString,
+			registryUUID, scopeData.Depth or 0,
+			#functionCalls, #createdFunctions,
+			#createdVariable, #variableAssignments
+		))
+		print(string.rep('\n', 2))
+		for _, createFunctionData in ipairs( createdFunctions ) do
+			print('CREATED FUNCTION ; ', unpack(createFunctionData))
+		end
+		for _, functionCallData in ipairs( functionCalls ) do
+			print('FUNCTION CALLED ; ', unpack(functionCallData))
+		end
+		for _, createVariableData in ipairs( createdVariable ) do
+			print('VARIABLE CREATED ; ', unpack(createVariableData))
+		end
+		print(string.rep('\n', 2))
+	end
+end
+
+-- // Wrappers & EzOfUse // --
+function Class:GetCreatedFunctions(restrictScopeUUID)
+	error('Not Implemented')
+end
+
+function Class:GetFunctionCalls(restrictScopeUUID)
+	error('Not Implemented')
+end
+
+function Class:GetCreatedVariables(restrictScopeUUID)
+	error('Not Implemented')
+end
+
+--[[
+	-- Create one node tree that links scripts together in one large diagram
+	function Module:ConstructLargeNodeTree(parseResult)
+		print('Construct Large Tree ; ', parseResult)
+	end
+
+	-- Create node trees for each script separately (no linking between scripts in one large diagram)
+	function Module:ConstructPerScriptNodeTrees(parseResult)
+		print(parseResult)
+		local newNodeTree = NodeTreeContainer.TreeData.New()
+		local nodesArray = {}
+
+		--	{
+		--		{ ID = 'blah2', Depends = {}, Layer = 1 },
+		--		{ ID = 'blah', Depends = {'blah2'}, Layer = 2 },
+		--	}
+
+		for _, t in ipairs( parseResult ) do
+			local scriptFullName, envParserClass = unpack(t)
+			print('==== ', scriptFullName, ' ====')
+			envParserClass:OutputParse() -- DEBUG
+			break
+		end
+
+		newNodeTree:LoadNodes( nodesArray )
+
+		return newNodeTree
+	end
+]]
+
+return Class]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">61d737029f06db31031ca1d2000377d2</UniqueId>
 						</Properties>
 					</Item>
 				</Item>
@@ -18401,29 +19242,6 @@ return {
 							<string name="Name">BaseUI</string>
 							<string name="ScriptGuid">{10D29723-7F80-4A65-B03C-C646269C2749}</string>
 							<ProtectedString name="Source"><![CDATA[
-local BASE_UI_SCALE = Instance.new('UIScale')
-BASE_UI_SCALE.Name = '_UI_SCALE'
-BASE_UI_SCALE.Scale = 1
-
-local BASE_CIRCLE_UI_CORNER = Instance.new('UICorner')
-BASE_CIRCLE_UI_CORNER.Name = '_UI_CORNER'
-BASE_CIRCLE_UI_CORNER.CornerRadius = UDim.new(0.5, 0)
-
-local BASE_INV_IMAGE_BUTTON = Instance.new('ImageButton')
-BASE_INV_IMAGE_BUTTON.Name = 'Button'
-BASE_INV_IMAGE_BUTTON.Position = UDim2.fromScale(0.5, 0.5)
-BASE_INV_IMAGE_BUTTON.AnchorPoint = Vector2.new(0.5, 0.5)
-BASE_INV_IMAGE_BUTTON.Size = UDim2.fromScale(1, 1)
-BASE_INV_IMAGE_BUTTON.BackgroundTransparency = 1
-BASE_INV_IMAGE_BUTTON.ImageTransparency = 1
-BASE_INV_IMAGE_BUTTON.ZIndex = 25
-
-local BASE_UI_PADDING = Instance.new('UIPadding')
-BASE_UI_PADDING.Name = '_UI_PADDING'
-
-local BASE_UI_ASPECT_RATIO = Instance.new('UIAspectRatioConstraint')
-BASE_UI_ASPECT_RATIO.AspectType = Enum.AspectType.ScaleWithParentSize
-
 -- https://javascript.info/bezier-curve
 local function getCubicBezier(p1, p2, p3, p4, alpha)
 	return
@@ -18436,63 +19254,20 @@ end
 -- // Module // --
 local Module = {}
 
-Module.BASE_UI_PADDING = BASE_UI_PADDING
-Module.BASE_UI_SCALE = BASE_UI_SCALE
-Module.BASE_INV_IMAGE_BUTTON = BASE_INV_IMAGE_BUTTON
-Module.BASE_CIRCLE_UI_CORNER = BASE_CIRCLE_UI_CORNER
-Module.BASE_UI_ASPECT_RATIO = BASE_UI_ASPECT_RATIO
+local BASE_INV_IMAGE_BUTTON = Instance.new('ImageButton')
+BASE_INV_IMAGE_BUTTON.Name = 'Button'
+BASE_INV_IMAGE_BUTTON.Position = UDim2.fromScale(0.5, 0.5)
+BASE_INV_IMAGE_BUTTON.AnchorPoint = Vector2.new(0.5, 0.5)
+BASE_INV_IMAGE_BUTTON.Size = UDim2.fromScale(1, 1)
+BASE_INV_IMAGE_BUTTON.BackgroundTransparency = 1
+BASE_INV_IMAGE_BUTTON.ImageTransparency = 1
+BASE_INV_IMAGE_BUTTON.ZIndex = 25
+Module.INV_IMAGE_BUTTON = BASE_INV_IMAGE_BUTTON
 
-local baseTreeSelectButton = Instance.new('TextButton') do
-	baseTreeSelectButton.Name = 'TreeDataSelectButton'
-	baseTreeSelectButton.TextColor3 = Color3.new(0.4, 0.4, 0.4)
-	baseTreeSelectButton.BackgroundColor3 = Color3.fromRGB(93, 93, 93)
-	baseTreeSelectButton.BackgroundTransparency = 0.8
-	baseTreeSelectButton.BorderSizePixel = 0
-	BASE_UI_SCALE:Clone().Parent = baseTreeSelectButton
-end
-Module.baseTreeSelectButton = baseTreeSelectButton
-
-local baseFlowChartContainerFrame = Instance.new('ScrollingFrame') do
-	baseFlowChartContainerFrame.BackgroundTransparency = 1
-	baseFlowChartContainerFrame.Size = UDim2.fromScale(0.975, 0.975)
-	baseFlowChartContainerFrame.Position = UDim2.fromScale(0.5, 0.5)
-	baseFlowChartContainerFrame.BorderSizePixel = 0
-	baseFlowChartContainerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	baseFlowChartContainerFrame.ScrollingEnabled = false
-	baseFlowChartContainerFrame.ScrollBarThickness = 0
-	baseFlowChartContainerFrame.ScrollBarImageTransparency = 1
-	baseFlowChartContainerFrame.CanvasSize = UDim2.fromOffset(1200, 700)
-	local gridIcon = Instance.new('ImageLabel')
-	gridIcon.Name = 'GridIcon'
-	gridIcon.BackgroundTransparency = 1
-	gridIcon.Size = UDim2.fromScale(1, 1)
-	gridIcon.ZIndex = -2
-	gridIcon.Image = 'rbxassetid://9446123374'
-	gridIcon.ScaleType = Enum.ScaleType.Tile
-	gridIcon.TileSize = UDim2.fromOffset(10, 10)
-	gridIcon.Parent = baseFlowChartContainerFrame
-end
-Module.baseFlowChartContainerFrame = baseFlowChartContainerFrame
-
-local baseFlowChartNodeFrame = Instance.new('Frame') do
-	baseFlowChartNodeFrame.BackgroundColor3 = Color3.fromRGB(111, 130, 165)
-	baseFlowChartNodeFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	baseFlowChartNodeFrame.BackgroundTransparency = 0.05
-	baseFlowChartNodeFrame.Size = UDim2.fromOffset(40, 40)
-	baseFlowChartNodeFrame.BorderSizePixel = 0
-	local flowChartNodeIDLabel = Instance.new('TextLabel')
-	flowChartNodeIDLabel.Name = 'IDLabel'
-	flowChartNodeIDLabel.BackgroundTransparency = 1
-	flowChartNodeIDLabel.Size = UDim2.fromScale(1, 0.2)
-	flowChartNodeIDLabel.TextScaled = true
-	flowChartNodeIDLabel.TextColor3 = Color3.new(1, 1, 1)
-	flowChartNodeIDLabel.Position = UDim2.fromScale(0, 1)
-	flowChartNodeIDLabel.Text = 'ID_HERE'
-	flowChartNodeIDLabel.Parent = baseFlowChartNodeFrame
-	BASE_CIRCLE_UI_CORNER:Clone().Parent = baseFlowChartNodeFrame
-	BASE_INV_IMAGE_BUTTON:Clone().Parent = baseFlowChartNodeFrame
-end
-Module.baseFlowChartNodeFrame = baseFlowChartNodeFrame
+local BASE_CIRCLE_UI_CORNER = Instance.new('UICorner')
+BASE_CIRCLE_UI_CORNER.Name = '_UI_CORNER'
+BASE_CIRCLE_UI_CORNER.CornerRadius = UDim.new(0.5, 0)
+Module.CIRCLE_UI_CORNER = BASE_CIRCLE_UI_CORNER
 
 local baseLineFrame = Instance.new('Frame')
 baseLineFrame.BackgroundTransparency = 0
@@ -18509,7 +19284,7 @@ function Module:Line(p1, p2)
 	return newFrame
 end
 
-local BEZIER_RESOLUTION = 2 -- frame/pixels
+local BEZIER_RESOLUTION = 1 -- frame/pixels
 function Module:CubicBezierLine(p1, p2, p3, p4)
 	local bezierFrames = {}
 	local totalSteps = math.floor((p4 - p1).Magnitude / BEZIER_RESOLUTION)
@@ -18558,7 +19333,9 @@ ButtonClass.__index = ButtonClass
 function ButtonClass.New(widgetClass, buttonId, tooltip, icon_name , text : string?)
 	local pluginButton = pluginToolbar:CreateButton(buttonId, tooltip, icon_name, text)
 
-	widgetClass:Toggle(false)
+	if widgetClass then
+		widgetClass:Toggle(false)
+	end
 	pluginButton:SetActive(false)
 
 	local self = setmetatable({
@@ -18634,6 +19411,11 @@ WidgetModule:Init(plugin)
 ButtonClass.New(WidgetModule.ParseScript, 'Parse Script', 'This widget is used to parse scripts.', 'rbxassetid://8939587672')
 ButtonClass.New(WidgetModule.FlowDiagram, 'Flow Diagram', 'This widget is used to hold diagrams', 'rbxassetid://8939587672')
 ButtonClass.New(WidgetModule.NodeInfoDisplay, 'Node Info', 'This widget is used to display node information', 'rbxassetid://8939587672')
+
+ButtonClass.New(false, 'Display Latest Tokens', 'Display the latest parsed script\'s tokens', 'rbxassetid://8939587672'):OnClick(function()
+	local LatestTokenParseArray = WidgetModule.ParseScript:GetLatestParse()
+	print(LatestTokenParseArray or 'No Latest Parse')
+end)
 ]]></ProtectedString>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags"></BinaryString>
@@ -18763,11 +19545,16 @@ local PluginFolder = script.Parent.Parent
 local PluginModules = require(PluginFolder.Modules)
 
 local NodeTreeContainer = PluginModules.Classes.NodeTree
-local ScriptENVParser = PluginModules.Classes.ScriptENVParser
+--local ScriptENVParser = PluginModules.Classes.ScriptENVParser
+local ScriptENVParser = PluginModules.Classes.ScriptTokenParser
 
 local ScriptUtility = PluginModules.Utility.ScriptUtility
+local HashLibUtility = PluginModules.Utility.Hashlib
+local sha256 = HashLibUtility.sha256 :: (string) -> string
 
 local SystemsContainer = {}
+
+local LastTokenParse = false
 
 -- // Module // --
 local Module = {}
@@ -18783,17 +19570,20 @@ function Module:TokenParseSelections()
 	local ScriptInstances = Selection:Get()
 	for _, scriptInstance in ipairs( ScriptInstances ) do
 		if table.find(whitelistClassName, scriptInstance.ClassName) then
-			table.insert(parsedInfoArray, { scriptInstance:GetFullName(), ScriptUtility:RawTokenParse( scriptInstance ) })
+			table.insert(parsedInfoArray, {
+				scriptInstance:GetFullName(),
+				ScriptUtility:RawTokenParse( scriptInstance )
+			})
 		end
 	end
 	return parsedInfoArray
 end
 
-function Module:EnvClassParseTokens(parsedInfoArray, debugPrint)
+function Module:AddEnvParserToParseInfo(parsedInfoArray, debugPrint)
 	for _, t in ipairs( parsedInfoArray ) do
 		local scriptPath, tokenDictionary = unpack(t)
 		local envParser = ScriptENVParser.New()
-		local _ = envParser:ParseTokens(tokenDictionary)
+		local _, _ = envParser:ParseTokens(tokenDictionary)
 		if debugPrint then
 			print(scriptPath)
 			envParser:OutputParse() -- DEBUG
@@ -18804,49 +19594,73 @@ function Module:EnvClassParseTokens(parsedInfoArray, debugPrint)
 	return parsedInfoArray
 end
 
-function Module:ParseEnvArraysToNodeJSON(envParserArray)
-	-- { {fullScriptPath, tokenDictionary, envParser} }
-	local nodeArray = {}
+function Module:ParseEnvArraysToNodeJSONs(envParserArray)
+	-- 0 = root stack (global script environment)
+	-- 1 = local scope, depth 1
+	-- 2 = local scope, depth 2
+
+	-- This one creates a flow diagram of all scripts accessing each other (call functions)
+	local GlobalDepthNodeJSONArray = {}
+
+	-- This one creates diagram of invidivual script data
+	local ScriptDepthNodeJSONArray = {}
+
 	for _, t in ipairs( envParserArray ) do
-		local scriptPath, tokenDictionary, envParser = unpack(t)
-		local nodesTable = {}
-		table.insert(nodeArray, {scriptPath, nodesTable})
+		local scriptPath, _, envParserClass = unpack(t)
+
+		local scriptNodeDepthMap = {}
+
+		-- for all call functions
+		print('=============')
+		print(scriptPath, envParserClass)
+		for index, callFunctionNode in ipairs( envParserClass.CallFunctionNodes ) do
+			local statementIndex, dataType, data, depth = unpack(callFunctionNode)
+			print(statementIndex, dataType, data, depth)
+
+			local nodeHashValue = sha256(scriptPath..depth)
+			print(nodeHashValue)
+
+			local nodeData = { ID = nodeHashValue, Layer = depth }
+
+			local localNodeDepthMap = scriptNodeDepthMap[depth]
+			if not localNodeDepthMap then
+				localNodeDepthMap = {}
+				scriptNodeDepthMap[depth] = localNodeDepthMap
+			end
+			table.insert(localNodeDepthMap, nodeData)
+
+			local globalNodeDepthMap = GlobalDepthNodeJSONArray[depth]
+			if not globalNodeDepthMap then
+				globalNodeDepthMap = {}
+				GlobalDepthNodeJSONArray[depth] = globalNodeDepthMap
+			end
+			table.insert(globalNodeDepthMap, nodeData)
+
+			if index > 2 then
+				break
+			end
+		end
+		print('=============')
+
+		-- match node depth with globalDepthMap
+		ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
 	end
-	return nodeArray
+
+	-- put the nodes in the correct layer
+	local IndividualNodeJSONArray = {}
+	local GlobalNodeJSONArray = {}
+	for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
+		nodeData.Layer = layerZ
+	end
+	for layerZ, nodeData in pairs( GlobalNodeJSONArray ) do
+		nodeData.Layer = layerZ
+	end
+	-- return node array { ID = 'string', Depends = {'string', 'string'}, Layer = # }
+	return GlobalNodeJSONArray, IndividualNodeJSONArray
 end
 
-function Module:ConvertParseInfoArrayToNodeJSON(parsedInfoArray)
-	local nodeJSONArray = {}
-	--[[
-		{
-			ID = "Test1",
-			Layer = 1,
-			Depends = {"Test1"}
-		}
-
-		:SetData(node_data)
-	]]
-
-	-- SCOPE_VARIABLENAME_VALUETYPE
-
-	local scriptPath, tokenDictionary, envParser = unpack( parsedInfoArray[1] )
-
-	table.insert(nodeJSONArray, {
-		ID = "",
-		Layer = 1,
-		Depends = {},
-	})
-
-	--[[
-	for _, t in ipairs( parsedInfoArray ) do
-		local scriptPath, tokenDictionary, envParser = unpack(t)
-		local fromScriptNodeArray = {}
-
-		-- create each node here for each data point
-
-		table.move(fromScriptNodeArray, 1, #fromScriptNodeArray, #nodeJSONArray, nodeJSONArray)
-	end]]
-	return nodeJSONArray
+function Module:GetLatestParse()
+	return LastTokenParse
 end
 
 function Module:Show()
@@ -18904,9 +19718,15 @@ function Module:Init(otherSystems, plugin)
 	TriggerButton.TextScaled = true
 	TriggerButton.Activated:Connect(function()
 		local tokenScriptArray = Module:TokenParseSelections()
-		local tokenNodeJSON = Module:ConvertParseInfoArrayToNodeJSON(tokenScriptArray)
-		local _ = SystemsContainer.FlowDiagram:ParseEnvArraysToNodeJSON(tokenNodeJSON)
-		SystemsContainer.FlowDiagramodule:UpdateTabs()
+		LastTokenParse = tokenScriptArray
+		Module:AddEnvParserToParseInfo(tokenScriptArray, false)
+		local GlobalNodeJSONArray, IndividualNodeJSONArrays = Module:ParseEnvArraysToNodeJSONs(tokenScriptArray)
+		print(GlobalNodeJSONArray, IndividualNodeJSONArrays)
+		SystemsContainer.FlowDiagramodule:LoadNodeJSON("Global", GlobalNodeJSONArray)
+		for ScriptPath, NodeArray in ipairs( IndividualNodeJSONArrays ) do
+			SystemsContainer.FlowDiagramodule:LoadNodeJSON(ScriptPath, NodeArray)
+		end
+		SystemsContainer.FlowDiagramodule:UpdateFrames()
 	end)
 
 	local PadUDim = UDim.new(0.05, 0)
@@ -18947,9 +19767,57 @@ local MaidClass = Modules.Classes.Maid
 
 local SystemsContainer = {}
 
-local baseTreeSelectButton = DefinedBaseUI.baseTreeSelectButton
-local baseFlowChartContainerFrame = DefinedBaseUI.baseFlowChartContainerFrame
-local baseFlowChartNodeFrame = DefinedBaseUI.baseFlowChartNodeFrame
+local baseTreeSelectButton = Instance.new('TextButton') do
+	baseTreeSelectButton.Name = 'TreeDataSelectButton'
+	baseTreeSelectButton.TextColor3 = Color3.new(0.4, 0.4, 0.4)
+	baseTreeSelectButton.BackgroundColor3 = Color3.fromRGB(93, 93, 93)
+	baseTreeSelectButton.BackgroundTransparency = 0.8
+	baseTreeSelectButton.BorderSizePixel = 0
+	local UIScale = Instance.new('UIScale')
+	UIScale.Name = '_UI_SCALE'
+	UIScale.Scale = 1
+	UIScale.Parent = baseTreeSelectButton
+end
+
+local baseFlowChartContainerFrame = Instance.new('ScrollingFrame') do
+	baseFlowChartContainerFrame.BackgroundTransparency = 1
+	baseFlowChartContainerFrame.Size = UDim2.fromScale(0.975, 0.975)
+	baseFlowChartContainerFrame.Position = UDim2.fromScale(0.5, 0.5)
+	baseFlowChartContainerFrame.BorderSizePixel = 0
+	baseFlowChartContainerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	baseFlowChartContainerFrame.ScrollingEnabled = false
+	baseFlowChartContainerFrame.ScrollBarThickness = 0
+	baseFlowChartContainerFrame.ScrollBarImageTransparency = 1
+	baseFlowChartContainerFrame.CanvasSize = UDim2.fromOffset(1200, 700)
+	local gridIcon = Instance.new('ImageLabel')
+	gridIcon.Name = 'GridIcon'
+	gridIcon.BackgroundTransparency = 1
+	gridIcon.Size = UDim2.fromScale(1, 1)
+	gridIcon.ZIndex = -2
+	gridIcon.Image = 'rbxassetid://9446123374'
+	gridIcon.ScaleType = Enum.ScaleType.Tile
+	gridIcon.TileSize = UDim2.fromOffset(10, 10)
+	gridIcon.Parent = baseFlowChartContainerFrame
+end
+
+local baseFlowChartNodeFrame = Instance.new('Frame') do
+	baseFlowChartNodeFrame.BackgroundColor3 = Color3.fromRGB(111, 130, 165)
+	baseFlowChartNodeFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	baseFlowChartNodeFrame.BackgroundTransparency = 0.05
+	baseFlowChartNodeFrame.Size = UDim2.fromOffset(40, 40)
+	baseFlowChartNodeFrame.BorderSizePixel = 0
+	local flowChartNodeIDLabel = Instance.new('TextLabel')
+	flowChartNodeIDLabel.Name = 'IDLabel'
+	flowChartNodeIDLabel.BackgroundTransparency = 1
+	flowChartNodeIDLabel.Size = UDim2.fromScale(1, 0.2)
+	flowChartNodeIDLabel.TextScaled = true
+	flowChartNodeIDLabel.TextColor3 = Color3.new(1, 1, 1)
+	flowChartNodeIDLabel.Position = UDim2.fromScale(0, 1)
+	flowChartNodeIDLabel.Text = 'ID_HERE'
+	flowChartNodeIDLabel.Parent = baseFlowChartNodeFrame
+	DefinedBaseUI.CIRCLE_UI_CORNER:Clone().Parent = baseFlowChartNodeFrame
+	DefinedBaseUI.INV_IMAGE_BUTTON:Clone().Parent = baseFlowChartNodeFrame
+end
 
 local function UIBezierLine(p1, p2, parentFrame)
 	local wasCreated = false
@@ -18961,6 +19829,11 @@ local function UIBezierLine(p1, p2, parentFrame)
 		bezierFolderInstance.Parent = parentFrame
 		if (p1.x == p2.x) or (p1.y == p2.y) then
 			DefinedBaseUI:Line(p1, p2).Parent = bezierFolderInstance
+			--[[
+			local lineSegments = DefinedBaseUI:Line(p1, p2)
+			for _, segment in ipairs( lineSegments ) do
+				segment.Parent = bezierFolderInstance
+			end]]
 		else
 			local dir = (p1 - p2)
 			local lineSegments = DefinedBaseUI:CubicBezierLine(p1, Vector2.new(p1.x - (dir.x * 0.375), p1.y), Vector2.new(p2.x + (dir.x * 0.375), p2.y), p2 )
@@ -18993,10 +19866,10 @@ function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 	if not Frame then
 		Frame = baseFlowChartNodeFrame:Clone()
 		Frame.Position = UDim2.fromOffset(nodeClass.x, nodeClass.y)
-		print(Frame.Button:GetFullName())
+		-- print(Frame.Button:GetFullName())
 		Frame.IDLabel.Text = nodeClass.ID
 		Frame.Button.Activated:Connect(function()
-			print(nodeClass.ID)
+			-- print(nodeClass.ID)
 			SystemsContainer.NodeInfoDisplay:DisplayNodeData(nodeClass)
 		end)
 		Frame.ZIndex = 2
@@ -19107,10 +19980,10 @@ function Module:GetCategorySelectButton(baseTreeClass, targetFrame)
 end
 
 function Module:UpdateFrames()
+
+	local nameCache = {}
 	for _, baseTreeClass in ipairs( Module.ActiveTrees ) do
-		if not baseTreeClass.visible then
-			continue
-		end
+		table.insert(nameCache, baseTreeClass.name)
 		local TreeFrame = Module:GetFlowChartFrame(baseTreeClass)
 		local TreeButton = Module:GetCategorySelectButton(baseTreeClass, TreeFrame)
 		if TreeButton then
@@ -19118,38 +19991,32 @@ function Module:UpdateFrames()
 			Module.ButtonToTreeFrame[TreeButton] = TreeFrame
 		end
 	end
-end
 
-function Module:LoadNodeArray( nodeArray )
-	local baseTreeClass = NodeTreeClassModule.TreeData.New()
-	-- baseTreeClass.IDToNode
-	-- baseTreeClass.LayerZToNodeMap
-	-- baseTreeClass.nodes
-	-- return IDToNode, LayerZToNodeMap, NodesArray
-	return baseTreeClass
-end
-
-function Module:LoadNodeJSON( nodeJSONArray )
-	local baseTreeClass = NodeTreeClassModule.TreeData.New()
-	baseTreeClass:LoadNodes( nodeJSONArray )
-	baseTreeClass.visible = true
-	table.insert(Module.ActiveTrees, baseTreeClass)
-	return baseTreeClass
-end
-
-function Module:UpdateTabs()
-	-- change tab highlights / visibility and stuff
-	for TreeButton, TreeFrame in pairs(Module.ButtonToTreeFrame) do
-		if not TreeFrame:IsDescendantOf(Module.FlowChartFrame) then
-			TreeButton:Destroy()
+	for Button, Frame in pairs( Module.ButtonToTreeFrame ) do
+		if not table.find(nameCache, Frame.Name) then
+			Module.ButtonToTreeFrame[Button] = nil
+			Button:Destroy()
+			Frame:Destroy()
 		end
 	end
-	-- update the frames
-	Module:UpdateFrames()
+
 	if not Module.FirstRun and #Module.ActiveTrees > 0 then
 		Module.FirstRun = true
 		Module:ToggleFrame(Module.FlowChartFrame:FindFirstChildWhichIsA('Frame'))
 	end
+end
+
+function Module:LoadNodeJSON( Name, nodeJSONArray )
+	local baseTreeClass = NodeTreeClassModule.TreeData.New()
+	baseTreeClass.name = Name
+	baseTreeClass:LoadNodes( nodeJSONArray )
+	table.insert(Module.ActiveTrees, baseTreeClass)
+	return baseTreeClass
+end
+
+function Module:ClearActiveTrees()
+	Modules.ActiveTrees = {}
+	Module:UpdateFrames()
 end
 
 function Module:Show()
@@ -19185,7 +20052,6 @@ function Module:Destroy()
 end
 
 function Module:Init(otherSystems, plugin)
-	print(otherSystems)
 	SystemsContainer = otherSystems
 	Module.plugin = plugin
 
@@ -19252,17 +20118,18 @@ function Module:Init(otherSystems, plugin)
 	TreeSelectGridLayout.CellPadding = UDim2.fromScale(0, 0.01)
 	TreeSelectGridLayout.CellSize = UDim2.fromScale(1, 0.1)
 	TreeSelectGridLayout.Parent = TreeSelectFrame
-	local TreeSelectAspectRatio = DefinedBaseUI.BASE_UI_ASPECT_RATIO:Clone()
+	local TreeSelectAspectRatio = Instance.new('UIAspectRatioConstraint')
+	TreeSelectAspectRatio.AspectType = Enum.AspectType.ScaleWithParentSize
 	TreeSelectAspectRatio.AspectRatio = 3.5
 	TreeSelectAspectRatio.Parent = TreeSelectGridLayout
-	local TreeSelectUIPadding = DefinedBaseUI.BASE_UI_PADDING:Clone()
+	local TreeSelectUIPadding = Instance.new('UIPadding')
 	TreeSelectUIPadding.PaddingTop = UDim.new(0.01, 0)
 	TreeSelectUIPadding.PaddingLeft = UDim.new(0.02, 0)
 	TreeSelectUIPadding.PaddingRight = UDim.new(0.02, 0)
 	TreeSelectUIPadding.Parent = TreeSelectFrame
 
-	local _ = Module:LoadNodeJSON( Modules.Defined.TestDiagram )
-	Module:UpdateTabs()
+	local _ = Module:LoadNodeJSON( "TestDiagram", Modules.Defined.TestDiagram )
+	Module:UpdateFrames()
 	Module:Toggle(true)
 end
 
@@ -19281,11 +20148,20 @@ return Module
 						<Content name="LinkedSource"><null></null></Content>
 						<string name="Name">NodeInfoDisplay</string>
 						<string name="ScriptGuid">{AC372DDB-9E29-4F79-9ADF-9ECD12924F5A}</string>
-						<ProtectedString name="Source"><![CDATA[
+						<ProtectedString name="Source"><![CDATA[local HttpService = game:GetService("HttpService")
+
 local PluginFolder = script.Parent.Parent
 local PluginModules = require(PluginFolder.Modules)
 
 local SystemsContainer = {}
+
+local baseNodeDataLabel = Instance.new('TextLabel')
+baseNodeDataLabel.Name = 'BaseNodeDataLabel'
+baseNodeDataLabel.BackgroundTransparency = 1
+baseNodeDataLabel.TextScaled = true
+baseNodeDataLabel.TextColor3 = Color3.new(1, 1, 1)
+baseNodeDataLabel.Text = ''
+baseNodeDataLabel.Font = Enum.Font.SourceSansBold
 
 -- // Module // --
 local Module = {}
@@ -19293,31 +20169,56 @@ local Module = {}
 Module.WidgetMaid = PluginModules.Classes.Maid.New()
 Module.Visible = false
 Module.DockWidget = false
+Module.NodeInfoDisplay = false
 Module.plugin = false
 
+function Module:ClearLabels()
+	for _, Label in ipairs( Module.NodeInfoDisplay:GetChildren() ) do
+		if Label:IsA('TextLabel') then
+			Label:Destroy()
+		end
+	end
+end
+
 function Module:DisplayNodeData(nodeClass)
-	print(nodeClass)
+	-- print(nodeClass)
+	Module:ClearLabels()
+	if not Module.Visible then
+		return
+	end
+	for propName, propVal in pairs(nodeClass) do
+		local valType = typeof(propVal)
+		if valType == 'number' then
+			propVal = math.floor(propVal * 10) / 10 -- round to 1 decimal
+		elseif valType == 'table' then
+			propVal = HttpService:JSONEncode(propVal) -- json encode table as string
+			valType = #propVal > 0 and 'array' or 'dict'
+		end
+		local baseLabel = baseNodeDataLabel:Clone()
+		baseLabel.Name = propName
+		baseLabel.Text = string.format('%s = %s (%s)', propName, tostring(propVal), valType)
+		baseLabel.Parent = Module.NodeInfoDisplay
+	end
 end
 
 function Module:Show()
 	Module.DockWidget.Enabled = true
-	print(script.Name, 'Show')
+	-- print(script.Name, 'Show')
 end
 
 function Module:Hide()
 	Module.DockWidget.Enabled = false
-	print(script.Name, 'Hide')
+	-- print(script.Name, 'Hide')
+	Module:ClearLabels()
 	self.WidgetMaid:Cleanup()
 end
 
 function Module:Toggle(forcedValue)
-	print(typeof(forcedValue))
 	if typeof(forcedValue) == 'boolean' then
 		Module.Visible = forcedValue
 	else
 		Module.Visible = not Module.Visible
 	end
-	print(Module.Visible)
 	if Module.Visible then
 		Module:Show()
 	else
@@ -19354,6 +20255,16 @@ function Module:Init(otherSystems, plugin)
 		BackgroundFrame.Size = UDim2.fromScale(1, 1)
 		BackgroundFrame.ZIndex = 0
 		BackgroundFrame.Parent = dockWidget
+		Module.NodeInfoDisplay = BackgroundFrame
+
+		local GridLayout = Instance.new('UIGridLayout')
+		GridLayout.CellPadding = UDim2.fromScale(0, 0.05)
+		GridLayout.CellSize = UDim2.fromScale(1, 0.075)
+		GridLayout.Parent = BackgroundFrame
+		local UIPadding = Instance.new('UIPadding')
+		UIPadding.PaddingBottom = UDim.new(0.04, 0)
+		UIPadding.PaddingTop = UDim.new(0.04, 0)
+		UIPadding.Parent = BackgroundFrame
 	end
 end
 

@@ -16,7 +16,9 @@ ButtonClass.__index = ButtonClass
 function ButtonClass.New(widgetClass, buttonId, tooltip, icon_name , text : string?)
 	local pluginButton = pluginToolbar:CreateButton(buttonId, tooltip, icon_name, text)
 
-	widgetClass:Toggle(false)
+	if widgetClass then
+		widgetClass:Toggle(false)
+	end
 	pluginButton:SetActive(false)
 
 	local self = setmetatable({
@@ -92,3 +94,8 @@ WidgetModule:Init(plugin)
 ButtonClass.New(WidgetModule.ParseScript, 'Parse Script', 'This widget is used to parse scripts.', 'rbxassetid://8939587672')
 ButtonClass.New(WidgetModule.FlowDiagram, 'Flow Diagram', 'This widget is used to hold diagrams', 'rbxassetid://8939587672')
 ButtonClass.New(WidgetModule.NodeInfoDisplay, 'Node Info', 'This widget is used to display node information', 'rbxassetid://8939587672')
+
+ButtonClass.New(false, 'Display Latest Tokens', 'Display the latest parsed script\'s tokens', 'rbxassetid://8939587672'):OnClick(function()
+	local LatestTokenParseArray = WidgetModule.ParseScript:GetLatestParse()
+	print(LatestTokenParseArray or 'No Latest Parse')
+end)

@@ -5,13 +5,16 @@ local PluginFolder = script.Parent.Parent
 local PluginModules = require(PluginFolder.Modules)
 
 local NodeTreeContainer = PluginModules.Classes.NodeTree
-local ScriptENVParser = PluginModules.Classes.ScriptENVParser
+--local ScriptENVParser = PluginModules.Classes.ScriptENVParser
+local ScriptENVParser = PluginModules.Classes.ScriptTokenParser
 
 local ScriptUtility = PluginModules.Utility.ScriptUtility
 local HashLibUtility = PluginModules.Utility.Hashlib
 local sha256 = HashLibUtility.sha256 :: (string) -> string
 
 local SystemsContainer = {}
+
+local LastTokenParse = false
 
 -- // Module // --
 local Module = {}
@@ -40,7 +43,7 @@ function Module:AddEnvParserToParseInfo(parsedInfoArray, debugPrint)
 	for _, t in ipairs( parsedInfoArray ) do
 		local scriptPath, tokenDictionary = unpack(t)
 		local envParser = ScriptENVParser.New()
-		local _ = envParser:ParseTokens(tokenDictionary)
+		local _, _ = envParser:ParseTokens(tokenDictionary)
 		if debugPrint then
 			print(scriptPath)
 			envParser:OutputParse() -- DEBUG
@@ -116,6 +119,10 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 	return GlobalNodeJSONArray, IndividualNodeJSONArray
 end
 
+function Module:GetLatestParse()
+	return LastTokenParse
+end
+
 function Module:Show()
 	Module.DockWidget.Enabled = true
 	-- print(script.Name, 'Show')
@@ -171,6 +178,7 @@ function Module:Init(otherSystems, plugin)
 	TriggerButton.TextScaled = true
 	TriggerButton.Activated:Connect(function()
 		local tokenScriptArray = Module:TokenParseSelections()
+		LastTokenParse = tokenScriptArray
 		Module:AddEnvParserToParseInfo(tokenScriptArray, false)
 		local GlobalNodeJSONArray, IndividualNodeJSONArrays = Module:ParseEnvArraysToNodeJSONs(tokenScriptArray)
 		print(GlobalNodeJSONArray, IndividualNodeJSONArrays)
