@@ -72,7 +72,7 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 		if statementData.Type == 'CallExprStat' then
 			-- print(statementData)
 			self:_ParseFunctionArguments( ScopeRegistry, statementData.Expression.FunctionArguments.ArgList )
-		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' then
+		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' or statementData.Type == 'FunctionLiteral' then
 			if statementData.FunctionStat then
 				warn('(Local)FunctionStat has a FunctionStat table!')
 				self:_ParseStatementList( newScopeUUID, statementData.FunctionStat.Body.StatementList, Depth + 1 )
@@ -85,10 +85,12 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 			self:_ParseStatementList( newScopeUUID, statementData.StatementList, Depth + 1 )
 		elseif statementData.Type == 'VariableExpr' then
 			warn('Got VariableExpr || ', statementIndex)--, statementData)
+			print(statementData)
 		elseif statementData.Type == 'LocalVarStat' then
 			warn('Got LocalVarStat || ', statementIndex)--, statementData)
 		elseif not table.find(IgnoreTypes, statementData.Type) then
 			warn('Unsupported Type ; ', statementData.Type, ' under scope ', parentUUID)
+			print(statementData)
 		end
 	end
 

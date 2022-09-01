@@ -207,6 +207,7 @@ function Module:GetCategorySelectButton(baseTreeClass, targetFrame)
 	if not categoryButton then
 		categoryButton = baseTreeSelectButton:Clone()
 		categoryButton.Name = baseTreeClass.name
+		categoryButton.Text = baseTreeClass.name
 		categoryButton.MouseEnter:Connect(function()
 			TweenService:Create(categoryButton._UI_SCALE, TweenInfo.new(0.25), {Scale = 1.05}):Play()
 		end)
@@ -373,7 +374,6 @@ function Module:Init(otherSystems, plugin)
 
 	local _ = Module:LoadNodeJSON( "TestDiagram", Modules.Defined.TestDiagram )
 	Module:UpdateFrames()
-	Module:Toggle(true)
 end
 
 return Module

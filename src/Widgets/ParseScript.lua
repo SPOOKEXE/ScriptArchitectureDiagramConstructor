@@ -59,62 +59,64 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 	-- 1 = local scope, depth 1
 	-- 2 = local scope, depth 2
 
+	print(envParserArray)
+
 	-- This one creates a flow diagram of all scripts accessing each other (call functions)
-	local GlobalDepthNodeJSONArray = {}
+	-- local GlobalDepthNodeJSONArray = {}
 
-	-- This one creates diagram of invidivual script data
-	local ScriptDepthNodeJSONArray = {}
+	-- -- This one creates diagram of invidivual script data
+	-- local ScriptDepthNodeJSONArray = {}
 
-	for _, t in ipairs( envParserArray ) do
-		local scriptPath, _, envParserClass = unpack(t)
+	-- for _, t in ipairs( envParserArray ) do
+	-- 	local scriptPath, _, envParserClass = unpack(t)
 
-		local scriptNodeDepthMap = {}
+	-- 	local scriptNodeDepthMap = {}
 
-		-- for all call functions
-		print('=============')
-		print(scriptPath, envParserClass)
-		for index, callFunctionNode in ipairs( envParserClass.CallFunctionNodes ) do
-			local statementIndex, dataType, data, depth = unpack(callFunctionNode)
-			print(statementIndex, dataType, data, depth)
+	-- 	-- for all call functions
+	-- 	print('=============')
+	-- 	print(scriptPath, envParserClass)
+	-- 	for index, callFunctionNode in ipairs( envParserClass._FunctionCalls ) do
+	-- 		local statementIndex, dataType, data, depth = unpack(callFunctionNode)
+	-- 		print(statementIndex, dataType, data, depth)
 
-			local nodeHashValue = sha256(scriptPath..depth)
-			print(nodeHashValue)
+	-- 		local nodeHashValue = sha256(scriptPath..depth)
+	-- 		print(nodeHashValue)
 
-			local nodeData = { ID = nodeHashValue, Layer = depth }
+	-- 		local nodeData = { ID = nodeHashValue, Layer = depth }
 
-			local localNodeDepthMap = scriptNodeDepthMap[depth]
-			if not localNodeDepthMap then
-				localNodeDepthMap = {}
-				scriptNodeDepthMap[depth] = localNodeDepthMap
-			end
-			table.insert(localNodeDepthMap, nodeData)
+	-- 		local localNodeDepthMap = scriptNodeDepthMap[depth]
+	-- 		if not localNodeDepthMap then
+	-- 			localNodeDepthMap = {}
+	-- 			scriptNodeDepthMap[depth] = localNodeDepthMap
+	-- 		end
+	-- 		table.insert(localNodeDepthMap, nodeData)
 
-			local globalNodeDepthMap = GlobalDepthNodeJSONArray[depth]
-			if not globalNodeDepthMap then
-				globalNodeDepthMap = {}
-				GlobalDepthNodeJSONArray[depth] = globalNodeDepthMap
-			end
-			table.insert(globalNodeDepthMap, nodeData)
+	-- 		local globalNodeDepthMap = GlobalDepthNodeJSONArray[depth]
+	-- 		if not globalNodeDepthMap then
+	-- 			globalNodeDepthMap = {}
+	-- 			GlobalDepthNodeJSONArray[depth] = globalNodeDepthMap
+	-- 		end
+	-- 		table.insert(globalNodeDepthMap, nodeData)
 
-			if index > 2 then
-				break
-			end
-		end
-		print('=============')
+	-- 		if index > 2 then
+	-- 			break
+	-- 		end
+	-- 	end
+	-- 	print('=============')
 
-		-- match node depth with globalDepthMap
-		ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
-	end
+	-- 	-- match node depth with globalDepthMap
+	-- 	ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
+	-- end
 
 	-- put the nodes in the correct layer
 	local IndividualNodeJSONArray = {}
 	local GlobalNodeJSONArray = {}
-	for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
-		nodeData.Layer = layerZ
-	end
-	for layerZ, nodeData in pairs( GlobalNodeJSONArray ) do
-		nodeData.Layer = layerZ
-	end
+	-- for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
+	-- 	nodeData.Layer = layerZ
+	-- end
+	-- for layerZ, nodeData in pairs( GlobalNodeJSONArray ) do
+	-- 	nodeData.Layer = layerZ
+	-- end
 	-- return node array { ID = 'string', Depends = {'string', 'string'}, Layer = # }
 	return GlobalNodeJSONArray, IndividualNodeJSONArray
 end
@@ -182,11 +184,12 @@ function Module:Init(otherSystems, plugin)
 		Module:AddEnvParserToParseInfo(tokenScriptArray, false)
 		local GlobalNodeJSONArray, IndividualNodeJSONArrays = Module:ParseEnvArraysToNodeJSONs(tokenScriptArray)
 		print(GlobalNodeJSONArray, IndividualNodeJSONArrays)
-		SystemsContainer.FlowDiagramodule:LoadNodeJSON("Global", GlobalNodeJSONArray)
+		SystemsContainer.FlowDiagram:LoadNodeJSON("Global", GlobalNodeJSONArray)
 		for ScriptPath, NodeArray in ipairs( IndividualNodeJSONArrays ) do
-			SystemsContainer.FlowDiagramodule:LoadNodeJSON(ScriptPath, NodeArray)
+			local splitN = string.split(ScriptPath, ".")
+			SystemsContainer.FlowDiagram:LoadNodeJSON(splitN[#splitN], NodeArray)
 		end
-		SystemsContainer.FlowDiagramodule:UpdateFrames()
+		SystemsContainer.FlowDiagram:UpdateFrames()
 	end)
 
 	local PadUDim = UDim.new(0.05, 0)

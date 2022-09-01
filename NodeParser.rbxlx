@@ -82,27 +82,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>5.86217022</X>
-					<Y>49.6691208</Y>
-					<Z>25.1200829</Z>
-					<R00>-0.77895087</R00>
-					<R01>-0.552306056</R01>
-					<R02>0.296974033</R02>
+					<X>-11.310689</X>
+					<Y>43.5002937</Y>
+					<Z>23.8962498</Z>
+					<R00>0.421411842</R00>
+					<R01>-0.599464417</R01>
+					<R02>0.680481136</R02>
 					<R10>-0</R10>
-					<R11>0.473578632</R11>
-					<R12>0.88075155</R12>
-					<R20>-0.62708497</R20>
-					<R21>0.686062157</R21>
-					<R22>-0.368894488</R22>
+					<R11>0.750362873</R11>
+					<R12>0.66102618</R12>
+					<R20>-0.906869411</R20>
+					<R21>-0.278564274</R21>
+					<R22>0.31621179</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>5.26822662</X>
-					<Y>47.9076309</Y>
-					<Z>25.8578663</Z>
+					<X>-12.6716509</X>
+					<Y>42.1782417</Y>
+					<Z>23.2638264</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -151,6 +151,7 @@
 				<bool name="CanQuery">true</bool>
 				<bool name="CanTouch">true</bool>
 				<bool name="CastShadow">true</bool>
+				<string name="CollisionGroup">Default</string>
 				<int name="CollisionGroupId">0</int>
 				<Color3uint8 name="Color3uint8">4284702562</Color3uint8>
 				<PhysicalProperties name="CustomPhysicalProperties">
@@ -247,6 +248,7 @@
 				<bool name="CanQuery">true</bool>
 				<bool name="CanTouch">true</bool>
 				<bool name="CastShadow">true</bool>
+				<string name="CollisionGroup">Default</string>
 				<int name="CollisionGroupId">0</int>
 				<Color3uint8 name="Color3uint8">4288914085</Color3uint8>
 				<PhysicalProperties name="CustomPhysicalProperties">
@@ -11577,7 +11579,7 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 		if statementData.Type == 'CallExprStat' then
 			-- print(statementData)
 			self:_ParseFunctionArguments( ScopeRegistry, statementData.Expression.FunctionArguments.ArgList )
-		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' then
+		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' or statementData.Type == 'FunctionLiteral' then
 			if statementData.FunctionStat then
 				warn('(Local)FunctionStat has a FunctionStat table!')
 				self:_ParseStatementList( newScopeUUID, statementData.FunctionStat.Body.StatementList, Depth + 1 )
@@ -11590,10 +11592,12 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 			self:_ParseStatementList( newScopeUUID, statementData.StatementList, Depth + 1 )
 		elseif statementData.Type == 'VariableExpr' then
 			warn('Got VariableExpr || ', statementIndex)--, statementData)
+			print(statementData)
 		elseif statementData.Type == 'LocalVarStat' then
 			warn('Got LocalVarStat || ', statementIndex)--, statementData)
 		elseif not table.find(IgnoreTypes, statementData.Type) then
 			warn('Unsupported Type ; ', statementData.Type, ' under scope ', parentUUID)
+			print(statementData)
 		end
 	end
 
@@ -19599,62 +19603,64 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 	-- 1 = local scope, depth 1
 	-- 2 = local scope, depth 2
 
+	print(envParserArray)
+
 	-- This one creates a flow diagram of all scripts accessing each other (call functions)
-	local GlobalDepthNodeJSONArray = {}
+	-- local GlobalDepthNodeJSONArray = {}
 
-	-- This one creates diagram of invidivual script data
-	local ScriptDepthNodeJSONArray = {}
+	-- -- This one creates diagram of invidivual script data
+	-- local ScriptDepthNodeJSONArray = {}
 
-	for _, t in ipairs( envParserArray ) do
-		local scriptPath, _, envParserClass = unpack(t)
+	-- for _, t in ipairs( envParserArray ) do
+	-- 	local scriptPath, _, envParserClass = unpack(t)
 
-		local scriptNodeDepthMap = {}
+	-- 	local scriptNodeDepthMap = {}
 
-		-- for all call functions
-		print('=============')
-		print(scriptPath, envParserClass)
-		for index, callFunctionNode in ipairs( envParserClass.CallFunctionNodes ) do
-			local statementIndex, dataType, data, depth = unpack(callFunctionNode)
-			print(statementIndex, dataType, data, depth)
+	-- 	-- for all call functions
+	-- 	print('=============')
+	-- 	print(scriptPath, envParserClass)
+	-- 	for index, callFunctionNode in ipairs( envParserClass._FunctionCalls ) do
+	-- 		local statementIndex, dataType, data, depth = unpack(callFunctionNode)
+	-- 		print(statementIndex, dataType, data, depth)
 
-			local nodeHashValue = sha256(scriptPath..depth)
-			print(nodeHashValue)
+	-- 		local nodeHashValue = sha256(scriptPath..depth)
+	-- 		print(nodeHashValue)
 
-			local nodeData = { ID = nodeHashValue, Layer = depth }
+	-- 		local nodeData = { ID = nodeHashValue, Layer = depth }
 
-			local localNodeDepthMap = scriptNodeDepthMap[depth]
-			if not localNodeDepthMap then
-				localNodeDepthMap = {}
-				scriptNodeDepthMap[depth] = localNodeDepthMap
-			end
-			table.insert(localNodeDepthMap, nodeData)
+	-- 		local localNodeDepthMap = scriptNodeDepthMap[depth]
+	-- 		if not localNodeDepthMap then
+	-- 			localNodeDepthMap = {}
+	-- 			scriptNodeDepthMap[depth] = localNodeDepthMap
+	-- 		end
+	-- 		table.insert(localNodeDepthMap, nodeData)
 
-			local globalNodeDepthMap = GlobalDepthNodeJSONArray[depth]
-			if not globalNodeDepthMap then
-				globalNodeDepthMap = {}
-				GlobalDepthNodeJSONArray[depth] = globalNodeDepthMap
-			end
-			table.insert(globalNodeDepthMap, nodeData)
+	-- 		local globalNodeDepthMap = GlobalDepthNodeJSONArray[depth]
+	-- 		if not globalNodeDepthMap then
+	-- 			globalNodeDepthMap = {}
+	-- 			GlobalDepthNodeJSONArray[depth] = globalNodeDepthMap
+	-- 		end
+	-- 		table.insert(globalNodeDepthMap, nodeData)
 
-			if index > 2 then
-				break
-			end
-		end
-		print('=============')
+	-- 		if index > 2 then
+	-- 			break
+	-- 		end
+	-- 	end
+	-- 	print('=============')
 
-		-- match node depth with globalDepthMap
-		ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
-	end
+	-- 	-- match node depth with globalDepthMap
+	-- 	ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
+	-- end
 
 	-- put the nodes in the correct layer
 	local IndividualNodeJSONArray = {}
 	local GlobalNodeJSONArray = {}
-	for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
-		nodeData.Layer = layerZ
-	end
-	for layerZ, nodeData in pairs( GlobalNodeJSONArray ) do
-		nodeData.Layer = layerZ
-	end
+	-- for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
+	-- 	nodeData.Layer = layerZ
+	-- end
+	-- for layerZ, nodeData in pairs( GlobalNodeJSONArray ) do
+	-- 	nodeData.Layer = layerZ
+	-- end
 	-- return node array { ID = 'string', Depends = {'string', 'string'}, Layer = # }
 	return GlobalNodeJSONArray, IndividualNodeJSONArray
 end
@@ -19722,11 +19728,11 @@ function Module:Init(otherSystems, plugin)
 		Module:AddEnvParserToParseInfo(tokenScriptArray, false)
 		local GlobalNodeJSONArray, IndividualNodeJSONArrays = Module:ParseEnvArraysToNodeJSONs(tokenScriptArray)
 		print(GlobalNodeJSONArray, IndividualNodeJSONArrays)
-		SystemsContainer.FlowDiagramodule:LoadNodeJSON("Global", GlobalNodeJSONArray)
+		SystemsContainer.FlowDiagram:LoadNodeJSON("Global", GlobalNodeJSONArray)
 		for ScriptPath, NodeArray in ipairs( IndividualNodeJSONArrays ) do
-			SystemsContainer.FlowDiagramodule:LoadNodeJSON(ScriptPath, NodeArray)
+			SystemsContainer.FlowDiagram:LoadNodeJSON(ScriptPath, NodeArray)
 		end
-		SystemsContainer.FlowDiagramodule:UpdateFrames()
+		SystemsContainer.FlowDiagram:UpdateFrames()
 	end)
 
 	local PadUDim = UDim.new(0.05, 0)
@@ -20130,7 +20136,6 @@ function Module:Init(otherSystems, plugin)
 
 	local _ = Module:LoadNodeJSON( "TestDiagram", Modules.Defined.TestDiagram )
 	Module:UpdateFrames()
-	Module:Toggle(true)
 end
 
 return Module
