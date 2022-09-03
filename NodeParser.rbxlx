@@ -19730,7 +19730,8 @@ function Module:Init(otherSystems, plugin)
 		print(GlobalNodeJSONArray, IndividualNodeJSONArrays)
 		SystemsContainer.FlowDiagram:LoadNodeJSON("Global", GlobalNodeJSONArray)
 		for ScriptPath, NodeArray in ipairs( IndividualNodeJSONArrays ) do
-			SystemsContainer.FlowDiagram:LoadNodeJSON(ScriptPath, NodeArray)
+			local splitN = string.split(ScriptPath, ".")
+			SystemsContainer.FlowDiagram:LoadNodeJSON(splitN[#splitN], NodeArray)
 		end
 		SystemsContainer.FlowDiagram:UpdateFrames()
 	end)
@@ -19970,6 +19971,7 @@ function Module:GetCategorySelectButton(baseTreeClass, targetFrame)
 	if not categoryButton then
 		categoryButton = baseTreeSelectButton:Clone()
 		categoryButton.Name = baseTreeClass.name
+		categoryButton.Text = baseTreeClass.name
 		categoryButton.MouseEnter:Connect(function()
 			TweenService:Create(categoryButton._UI_SCALE, TweenInfo.new(0.25), {Scale = 1.05}):Play()
 		end)
