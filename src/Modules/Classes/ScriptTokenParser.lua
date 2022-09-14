@@ -1,5 +1,18 @@
 local HttpService = game:GetService("HttpService")
 
+local function JoinNameChain(nameChainData)
+	local nameString = ""
+	for _, stringData in ipairs( nameChainData ) do
+		if not stringData.Source then
+			warn('Invalid Name Chain Data ; ', stringData)
+			continue
+		end
+		nameString = nameString..stringData.Source
+	end
+	return nameString
+end
+
+
 -- // Class // --
 local Class = {}
 Class.__index = Class
@@ -29,15 +42,63 @@ function Class:Clear()
 	self.ScopeRegistries = {}
 end
 
-function Class:_ParseFunctionArguments( scopeRegistry, argumentList )
-	print('Parse Function Arguments - List Length: ', #argumentList)
-	-- print(scopeRegistry, argumentList)
-	self:_ParseStatementList(scopeRegistry.ScopeUUID, argumentList, scopeRegistry.Depth + 1)
+local IgnoreTypes = {
+	'TableLiteral', 'StringLiteral', 'VargLiteral',
+	'NumberLiteral', 'Ident', 'Symbol', 'String', 'Keyword',
+	'ContinueStat', 'NilLiteral', 'BooleanLiteral', 'BreakStat',
+}
+
+local WhitelistTypes = {
+	'ArgCall', 'CallExprStat', 'FunctionStat', 'LocalFunctionStat', 'FunctionLiteral',
+	'StatList', 'VariableExpr', 'CallExpr', 'MethodExpr', 'LocalVarStat', 'FieldExpr',
+	'BinopExpr', 'AssignmentStat', 'AssignmentStat 1', 'ReturnStat', 'GeneratorList',
+	'GenericForStat', 'IfStat', 'UnopExpr', 'IndexExpr', 'ParenExpr', 'NumericForStat',
+	'WhileStat', 'RepeatStat'
+}
+
+function Class:_CheckAvailableParses(ScopeRegistry, statementData)
+	print(statementData)
+	if statementData.FunctionArguments then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.FunctionArguments.ArgList, ScopeRegistry.Depth)
+	end
+	if statementData.FunctionStat then
+		self:_ParseStatementList( ScopeRegistry.ScopeUUID, {statementData.FunctionStat.Body}, ScopeRegistry.Depth + 1 )
+	end
+	if statementData.Body then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.Body.StatementList, ScopeRegistry.Depth + 1)
+	end
+	if statementData.Expression then
+		self:_ParseStatementList( ScopeRegistry.ScopeUUID, {statementData.Expression}, ScopeRegistry.Depth)
+	end
+	if statementData.ExprList then
+		self:_ParseStatementList( ScopeRegistry.ScopeUUID, statementData.ExprList, ScopeRegistry.Depth)
+	end
+	if statementData.ArgList then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.ArgList, ScopeRegistry.Depth)
+	end
+	if statementData.GeneratorList then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.GeneratorList, ScopeRegistry.Depth)
+	end
+	if statementData.Condition then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, {statementData.Condition}, ScopeRegistry.Depth)
+	end
+	if statementData.Rhs then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, #statementData.Rhs > 0 and statementData.Rhs or {statementData.Rhs}, ScopeRegistry.Depth)
+	end
+	if statementData.Lhs then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, #statementData.Lhs > 0 and statementData.Lhs or {statementData.Lhs}, ScopeRegistry.Depth)
+	end
+	if statementData.RangeList then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.RangeList, ScopeRegistry.Depth)
+	end
 end
 
-local IgnoreTypes = {'ReturnStat', 'GenericForStat', 'IfStat', 'AssignmentStat 1', 'StringLiteral', 'VargLiteral'}
 function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 	Depth = Depth or 0
+	if Depth > 50 then
+		return
+	end
+
 	print('Parent ID: ', parentUUID)
 	print('Step Depth; ', Depth)
 
@@ -46,8 +107,8 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 
 	local ScopeRegistry = {
 		_CreatedFunctions = {},
-		_CreatedVariables = {},
 		_FunctionCalls = {},
+		_CreatedVariables = {},
 
 		Depth = Depth,
 		ScopeUUID = newScopeUUID,
@@ -67,29 +128,14 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 	end
 	self.ScopeRegistries[newScopeUUID] = ScopeRegistry
 
+	task.wait(0.1)
+
 	for statementIndex, statementData in pairs( StatementList ) do
-		print('Parsing ; ', statementIndex, statementData.Type, Depth)
-		if statementData.Type == 'CallExprStat' then
-			-- print(statementData)
-			self:_ParseFunctionArguments( ScopeRegistry, statementData.Expression.FunctionArguments.ArgList )
-		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' or statementData.Type == 'FunctionLiteral' then
-			if statementData.FunctionStat then
-				warn('(Local)FunctionStat has a FunctionStat table!')
-				self:_ParseStatementList( newScopeUUID, statementData.FunctionStat.Body.StatementList, Depth + 1 )
-			end
-			if statementData.Body then
-				warn('(Local)FunctionStat has a Body table!')
-				self:_ParseStatementList( newScopeUUID, statementData.Body.StatementList, Depth + 1 )
-			end
-		elseif statementData.Type == 'StatList' then
-			self:_ParseStatementList( newScopeUUID, statementData.StatementList, Depth + 1 )
-		elseif statementData.Type == 'VariableExpr' then
-			warn('Got VariableExpr || ', statementIndex)--, statementData)
-			print(statementData)
-		elseif statementData.Type == 'LocalVarStat' then
-			warn('Got LocalVarStat || ', statementIndex)--, statementData)
+		if table.find(WhitelistTypes, statementData.Type) then
+			warn('PARSING TYPE : ', statementData.Type)
+			self:_CheckAvailableParses( ScopeRegistry, statementData )
 		elseif not table.find(IgnoreTypes, statementData.Type) then
-			warn('Unsupported Type ; ', statementData.Type, ' under scope ', parentUUID)
+			warn('UNSUPPORTED TYPE ; ', statementData.Type, ' under scope ', parentUUID)
 			print(statementData)
 		end
 	end
@@ -122,43 +168,55 @@ end
 
 function Class:OutputParse()
 	print(string.rep('\n', 2))
-	local baseRegistryString = 'REGISTRY %s DEPTH %d || CALL FUNCTIONS (%d), CREATE FUNCTIONS (%d), SET VARIABLES (%d), CHANGED VARIABLES (%d)'
+	local baseRegistryString = 'REGISTRY %s DEPTH %d || CALL FUNCTIONS (%d), CREATE FUNCTIONS (%d), SET VARIABLES (%d)' -- ,CHANGED VARIABLES (%d)
 	for registryUUID, scopeData in pairs( self.ScopeRegistries ) do
 		local createdFunctions = self:GetCreatedFunctions(registryUUID)
 		local functionCalls = self:GetFunctionCalls(registryUUID)
 		local createdVariable = self:GetCreatedVariables(registryUUID)
-		local variableAssignments = self:GetVariableAssignments(registryUUID)
 		print(string.format(
 			baseRegistryString,
 			registryUUID, scopeData.Depth or 0,
 			#functionCalls, #createdFunctions,
-			#createdVariable, #variableAssignments
+			#createdVariable
 		))
-		print(string.rep('\n', 2))
+		print('\n')
 		for _, createFunctionData in ipairs( createdFunctions ) do
-			print('CREATED FUNCTION ; ', unpack(createFunctionData))
+			print('CREATED FUNCTION ; ', createFunctionData)
 		end
 		for _, functionCallData in ipairs( functionCalls ) do
-			print('FUNCTION CALLED ; ', unpack(functionCallData))
+			print('FUNCTION CALLED ; ', functionCallData)
 		end
 		for _, createVariableData in ipairs( createdVariable ) do
-			print('VARIABLE CREATED ; ', unpack(createVariableData))
+			print('VARIABLE CREATED ; ', createVariableData)
 		end
-		print(string.rep('\n', 2))
+		print('\n')
 	end
 end
 
 -- // Wrappers & EzOfUse // --
+function Class:__GetScopeArrayData(referenceTableString, restrictScopeUUID)
+	if restrictScopeUUID ~= nil then
+		return self.ScopeRegistries[restrictScopeUUID] and self.ScopeRegistries[restrictScopeUUID][referenceTableString]
+	end
+	local array = {}
+	for scopeUUID, scopeData in pairs(self.ScopeRegistries) do
+		for _, createdFunction in ipairs(scopeData[referenceTableString]) do
+			table.insert(array, createdFunction)
+		end
+	end
+	return array
+end
+
 function Class:GetCreatedFunctions(restrictScopeUUID)
-	error('Not Implemented')
+	return self:__GetScopeArrayData('_CreatedFunctions', restrictScopeUUID)
 end
 
 function Class:GetFunctionCalls(restrictScopeUUID)
-	error('Not Implemented')
+	return self:__GetScopeArrayData('_FunctionCalls', restrictScopeUUID)
 end
 
 function Class:GetCreatedVariables(restrictScopeUUID)
-	error('Not Implemented')
+	return self:__GetScopeArrayData('_CreatedVariables', restrictScopeUUID)
 end
 
 --[[

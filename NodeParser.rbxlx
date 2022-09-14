@@ -82,27 +82,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>-11.310689</X>
-					<Y>43.5002937</Y>
-					<Z>23.8962498</Z>
-					<R00>0.421411842</R00>
-					<R01>-0.599464417</R01>
-					<R02>0.680481136</R02>
-					<R10>-0</R10>
-					<R11>0.750362873</R11>
-					<R12>0.66102618</R12>
-					<R20>-0.906869411</R20>
-					<R21>-0.278564274</R21>
-					<R22>0.31621179</R22>
+					<X>-20.8773003</X>
+					<Y>103.491325</Y>
+					<Z>56.0889664</Z>
+					<R00>0.976371765</R00>
+					<R01>0.165546849</R01>
+					<R02>-0.138897404</R02>
+					<R10>-7.4505806e-09</R10>
+					<R11>0.642752707</R11>
+					<R12>0.766073883</R12>
+					<R20>0.216097757</R20>
+					<R21>-0.747972906</R21>
+					<R22>0.627565563</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>-12.6716509</X>
-					<Y>42.1782417</Y>
-					<Z>23.2638264</Z>
+					<X>-20.5995064</X>
+					<Y>101.959183</Y>
+					<Z>54.8338394</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -7739,6 +7739,7 @@ local function epic(...)
 end
 
 local function epic2(...)
+	local a = 0
 	local function work(...)
 		print(...)
 	end
@@ -8342,6 +8343,25 @@ EPic("ep", "ic")
 				<int64 name="SourceAssetId">-1</int64>
 				<BinaryString name="Tags"></BinaryString>
 				<UniqueId name="UniqueId">61d737029f06db31031ca1d200036916</UniqueId>
+			</Properties>
+		</Item>
+		<Item class="Script" referent="RBX0453763FE93A4770964CE92AB18AB5F0">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Script</string>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{E822CC38-4FB9-4D18-8B26-39BA6F70ED4C}</string>
+				<ProtectedString name="Source"><![CDATA[
+local e = function() end
+
+e().Models.Utility:WeldConstraint()
+
+]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+				<UniqueId name="UniqueId">46f0bcbe7ee7fe2e03331a910004418d</UniqueId>
 			</Properties>
 		</Item>
 	</Item>
@@ -11507,6 +11527,19 @@ return Class]]></ProtectedString>
 							<string name="ScriptGuid">{121E594C-DE8B-4AB7-B3E0-3DD3D2D94A94}</string>
 							<ProtectedString name="Source"><![CDATA[local HttpService = game:GetService("HttpService")
 
+local function JoinNameChain(nameChainData)
+	local nameString = ""
+	for _, stringData in ipairs( nameChainData ) do
+		if not stringData.Source then
+			warn('Invalid Name Chain Data ; ', stringData)
+			continue
+		end
+		nameString = nameString..stringData.Source
+	end
+	return nameString
+end
+
+
 -- // Class // --
 local Class = {}
 Class.__index = Class
@@ -11536,15 +11569,63 @@ function Class:Clear()
 	self.ScopeRegistries = {}
 end
 
-function Class:_ParseFunctionArguments( scopeRegistry, argumentList )
-	print('Parse Function Arguments - List Length: ', #argumentList)
-	-- print(scopeRegistry, argumentList)
-	self:_ParseStatementList(scopeRegistry.ScopeUUID, argumentList, scopeRegistry.Depth + 1)
+local IgnoreTypes = {
+	'TableLiteral', 'StringLiteral', 'VargLiteral',
+	'NumberLiteral', 'Ident', 'Symbol', 'String', 'Keyword',
+	'ContinueStat', 'NilLiteral', 'BooleanLiteral', 'BreakStat',
+}
+
+local WhitelistTypes = {
+	'ArgCall', 'CallExprStat', 'FunctionStat', 'LocalFunctionStat', 'FunctionLiteral',
+	'StatList', 'VariableExpr', 'CallExpr', 'MethodExpr', 'LocalVarStat', 'FieldExpr',
+	'BinopExpr', 'AssignmentStat', 'AssignmentStat 1', 'ReturnStat', 'GeneratorList',
+	'GenericForStat', 'IfStat', 'UnopExpr', 'IndexExpr', 'ParenExpr', 'NumericForStat',
+	'WhileStat', 'RepeatStat'
+}
+
+function Class:_CheckAvailableParses(ScopeRegistry, statementData)
+	print(statementData)
+	if statementData.FunctionArguments then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.FunctionArguments.ArgList, ScopeRegistry.Depth)
+	end
+	if statementData.FunctionStat then
+		self:_ParseStatementList( ScopeRegistry.ScopeUUID, {statementData.FunctionStat.Body}, ScopeRegistry.Depth + 1 )
+	end
+	if statementData.Body then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.Body.StatementList, ScopeRegistry.Depth + 1)
+	end
+	if statementData.Expression then
+		self:_ParseStatementList( ScopeRegistry.ScopeUUID, {statementData.Expression}, ScopeRegistry.Depth)
+	end
+	if statementData.ExprList then
+		self:_ParseStatementList( ScopeRegistry.ScopeUUID, statementData.ExprList, ScopeRegistry.Depth)
+	end
+	if statementData.ArgList then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.ArgList, ScopeRegistry.Depth)
+	end
+	if statementData.GeneratorList then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.GeneratorList, ScopeRegistry.Depth)
+	end
+	if statementData.Condition then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, {statementData.Condition}, ScopeRegistry.Depth)
+	end
+	if statementData.Rhs then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, #statementData.Rhs > 0 and statementData.Rhs or {statementData.Rhs}, ScopeRegistry.Depth)
+	end
+	if statementData.Lhs then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, #statementData.Lhs > 0 and statementData.Lhs or {statementData.Lhs}, ScopeRegistry.Depth)
+	end
+	if statementData.RangeList then
+		self:_ParseStatementList(ScopeRegistry.ScopeUUID, statementData.RangeList, ScopeRegistry.Depth)
+	end
 end
 
-local IgnoreTypes = {'ReturnStat', 'GenericForStat', 'IfStat', 'AssignmentStat 1', 'StringLiteral', 'VargLiteral'}
 function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 	Depth = Depth or 0
+	if Depth > 50 then
+		return
+	end
+
 	print('Parent ID: ', parentUUID)
 	print('Step Depth; ', Depth)
 
@@ -11553,8 +11634,8 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 
 	local ScopeRegistry = {
 		_CreatedFunctions = {},
-		_CreatedVariables = {},
 		_FunctionCalls = {},
+		_CreatedVariables = {},
 
 		Depth = Depth,
 		ScopeUUID = newScopeUUID,
@@ -11574,29 +11655,14 @@ function Class:_ParseStatementList( parentUUID, StatementList, Depth )
 	end
 	self.ScopeRegistries[newScopeUUID] = ScopeRegistry
 
+	task.wait(0.1)
+
 	for statementIndex, statementData in pairs( StatementList ) do
-		print('Parsing ; ', statementIndex, statementData.Type, Depth)
-		if statementData.Type == 'CallExprStat' then
-			-- print(statementData)
-			self:_ParseFunctionArguments( ScopeRegistry, statementData.Expression.FunctionArguments.ArgList )
-		elseif statementData.Type == 'FunctionStat' or statementData.Type == 'LocalFunctionStat' or statementData.Type == 'FunctionLiteral' then
-			if statementData.FunctionStat then
-				warn('(Local)FunctionStat has a FunctionStat table!')
-				self:_ParseStatementList( newScopeUUID, statementData.FunctionStat.Body.StatementList, Depth + 1 )
-			end
-			if statementData.Body then
-				warn('(Local)FunctionStat has a Body table!')
-				self:_ParseStatementList( newScopeUUID, statementData.Body.StatementList, Depth + 1 )
-			end
-		elseif statementData.Type == 'StatList' then
-			self:_ParseStatementList( newScopeUUID, statementData.StatementList, Depth + 1 )
-		elseif statementData.Type == 'VariableExpr' then
-			warn('Got VariableExpr || ', statementIndex)--, statementData)
-			print(statementData)
-		elseif statementData.Type == 'LocalVarStat' then
-			warn('Got LocalVarStat || ', statementIndex)--, statementData)
+		if table.find(WhitelistTypes, statementData.Type) then
+			warn('PARSING TYPE : ', statementData.Type)
+			self:_CheckAvailableParses( ScopeRegistry, statementData )
 		elseif not table.find(IgnoreTypes, statementData.Type) then
-			warn('Unsupported Type ; ', statementData.Type, ' under scope ', parentUUID)
+			warn('UNSUPPORTED TYPE ; ', statementData.Type, ' under scope ', parentUUID)
 			print(statementData)
 		end
 	end
@@ -11629,43 +11695,55 @@ end
 
 function Class:OutputParse()
 	print(string.rep('\n', 2))
-	local baseRegistryString = 'REGISTRY %s DEPTH %d || CALL FUNCTIONS (%d), CREATE FUNCTIONS (%d), SET VARIABLES (%d), CHANGED VARIABLES (%d)'
+	local baseRegistryString = 'REGISTRY %s DEPTH %d || CALL FUNCTIONS (%d), CREATE FUNCTIONS (%d), SET VARIABLES (%d)' -- ,CHANGED VARIABLES (%d)
 	for registryUUID, scopeData in pairs( self.ScopeRegistries ) do
 		local createdFunctions = self:GetCreatedFunctions(registryUUID)
 		local functionCalls = self:GetFunctionCalls(registryUUID)
 		local createdVariable = self:GetCreatedVariables(registryUUID)
-		local variableAssignments = self:GetVariableAssignments(registryUUID)
 		print(string.format(
 			baseRegistryString,
 			registryUUID, scopeData.Depth or 0,
 			#functionCalls, #createdFunctions,
-			#createdVariable, #variableAssignments
+			#createdVariable
 		))
-		print(string.rep('\n', 2))
+		print('\n')
 		for _, createFunctionData in ipairs( createdFunctions ) do
-			print('CREATED FUNCTION ; ', unpack(createFunctionData))
+			print('CREATED FUNCTION ; ', createFunctionData)
 		end
 		for _, functionCallData in ipairs( functionCalls ) do
-			print('FUNCTION CALLED ; ', unpack(functionCallData))
+			print('FUNCTION CALLED ; ', functionCallData)
 		end
 		for _, createVariableData in ipairs( createdVariable ) do
-			print('VARIABLE CREATED ; ', unpack(createVariableData))
+			print('VARIABLE CREATED ; ', createVariableData)
 		end
-		print(string.rep('\n', 2))
+		print('\n')
 	end
 end
 
 -- // Wrappers & EzOfUse // --
+function Class:__GetScopeArrayData(referenceTableString, restrictScopeUUID)
+	if restrictScopeUUID ~= nil then
+		return self.ScopeRegistries[restrictScopeUUID] and self.ScopeRegistries[restrictScopeUUID][referenceTableString]
+	end
+	local array = {}
+	for scopeUUID, scopeData in pairs(self.ScopeRegistries) do
+		for _, createdFunction in ipairs(scopeData[referenceTableString]) do
+			table.insert(array, createdFunction)
+		end
+	end
+	return array
+end
+
 function Class:GetCreatedFunctions(restrictScopeUUID)
-	error('Not Implemented')
+	return self:__GetScopeArrayData('_CreatedFunctions', restrictScopeUUID)
 end
 
 function Class:GetFunctionCalls(restrictScopeUUID)
-	error('Not Implemented')
+	return self:__GetScopeArrayData('_FunctionCalls', restrictScopeUUID)
 end
 
 function Class:GetCreatedVariables(restrictScopeUUID)
-	error('Not Implemented')
+	return self:__GetScopeArrayData('_CreatedVariables', restrictScopeUUID)
 end
 
 --[[
@@ -19603,16 +19681,58 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 	-- 1 = local scope, depth 1
 	-- 2 = local scope, depth 2
 
-	print(envParserArray)
+	local LocalScriptNodeJSON = {} -- diagram for each script data
 
 	-- This one creates a flow diagram of all scripts accessing each other (call functions)
 	-- local GlobalDepthNodeJSONArray = {}
 
-	-- -- This one creates diagram of invidivual script data
-	-- local ScriptDepthNodeJSONArray = {}
+	for _, t in ipairs( envParserArray ) do
+		local scriptPath, _, envParserClass = unpack(t)
+		-- envParserClass:OutputParse()
 
-	-- for _, t in ipairs( envParserArray ) do
-	-- 	local scriptPath, _, envParserClass = unpack(t)
+		local LocalScriptNodeMap = {}
+
+		for _, functionCallNode in ipairs( envParserClass:GetFunctionCalls() ) do
+			local dataType = functionCallNode.Type
+			local scopeUUID = functionCallNode.ScopeUUID
+			local functionName = functionCallNode.FunctionName
+			local depth = functionCallNode.Depth
+
+			local nodeHashValue = sha256(functionCallNode.Index..functionName..scopeUUID..depth..scriptPath)
+			print(dataType, functionName, nodeHashValue, scopeUUID, depth)
+
+			local nodeData = {
+				ID = nodeHashValue,
+				Layer = depth,
+				Depends = {},
+				Data = functionCallNode,
+			}
+
+			if not LocalScriptNodeMap[depth] then
+				LocalScriptNodeMap[depth] = {}
+			end
+			table.insert(LocalScriptNodeMap[depth], nodeData)
+		end
+
+		print(LocalScriptNodeMap)
+
+		for _, nodeDataArray in pairs(LocalScriptNodeMap) do
+			for _, nodeData in ipairs( nodeDataArray ) do
+				local previousLayer = (nodeData.Layer - 1)
+				while (not LocalScriptNodeMap[previousLayer]) or (previousLayer < 0) do
+					previousLayer -= 1
+				end
+				if previousLayer > 0 then
+					for _, dependantNode in ipairs( LocalScriptNodeMap[previousLayer] ) do
+						table.insert(nodeData.Depends, dependantNode.ID)
+					end
+				end
+			end
+		end
+
+		print(LocalScriptNodeMap)
+
+		table.insert(LocalScriptNodeJSON, {scriptPath, LocalScriptNodeMap})
 
 	-- 	local scriptNodeDepthMap = {}
 
@@ -19650,10 +19770,9 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 
 	-- 	-- match node depth with globalDepthMap
 	-- 	ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
-	-- end
+	end
 
 	-- put the nodes in the correct layer
-	local IndividualNodeJSONArray = {}
 	local GlobalNodeJSONArray = {}
 	-- for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
 	-- 	nodeData.Layer = layerZ
@@ -19662,7 +19781,7 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 	-- 	nodeData.Layer = layerZ
 	-- end
 	-- return node array { ID = 'string', Depends = {'string', 'string'}, Layer = # }
-	return GlobalNodeJSONArray, IndividualNodeJSONArray
+	return GlobalNodeJSONArray, LocalScriptNodeJSON -- { scriptPath, nodeArray }
 end
 
 function Module:GetLatestParse()
@@ -19886,7 +20005,7 @@ function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 end
 
 function Module:UpdateFramesInFlowChart( baseTreeClass, FlowChartFrame )
-	print(FlowChartFrame:GetFullName(), #baseTreeClass.nodes)
+	-- print(FlowChartFrame:GetFullName(), #baseTreeClass.nodes)
 
 	for _, nodeClass in ipairs( baseTreeClass.nodes ) do
 		for _, dependID in ipairs( nodeClass.depends ) do

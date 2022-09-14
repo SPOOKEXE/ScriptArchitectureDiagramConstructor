@@ -59,16 +59,58 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 	-- 1 = local scope, depth 1
 	-- 2 = local scope, depth 2
 
-	print(envParserArray)
+	local LocalScriptNodeJSON = {} -- diagram for each script data
 
 	-- This one creates a flow diagram of all scripts accessing each other (call functions)
 	-- local GlobalDepthNodeJSONArray = {}
 
-	-- -- This one creates diagram of invidivual script data
-	-- local ScriptDepthNodeJSONArray = {}
+	for _, t in ipairs( envParserArray ) do
+		local scriptPath, _, envParserClass = unpack(t)
+		-- envParserClass:OutputParse()
 
-	-- for _, t in ipairs( envParserArray ) do
-	-- 	local scriptPath, _, envParserClass = unpack(t)
+		local LocalScriptNodeMap = {}
+
+		for _, functionCallNode in ipairs( envParserClass:GetFunctionCalls() ) do
+			local dataType = functionCallNode.Type
+			local scopeUUID = functionCallNode.ScopeUUID
+			local functionName = functionCallNode.FunctionName
+			local depth = functionCallNode.Depth
+
+			local nodeHashValue = sha256(functionCallNode.Index..functionName..scopeUUID..depth..scriptPath)
+			print(dataType, functionName, nodeHashValue, scopeUUID, depth)
+
+			local nodeData = {
+				ID = nodeHashValue,
+				Layer = depth,
+				Depends = {},
+				Data = functionCallNode,
+			}
+
+			if not LocalScriptNodeMap[depth] then
+				LocalScriptNodeMap[depth] = {}
+			end
+			table.insert(LocalScriptNodeMap[depth], nodeData)
+		end
+
+		print(LocalScriptNodeMap)
+
+		for _, nodeDataArray in pairs(LocalScriptNodeMap) do
+			for _, nodeData in ipairs( nodeDataArray ) do
+				local previousLayer = (nodeData.Layer - 1)
+				while (not LocalScriptNodeMap[previousLayer]) or (previousLayer < 0) do
+					previousLayer -= 1
+				end
+				if previousLayer > 0 then
+					for _, dependantNode in ipairs( LocalScriptNodeMap[previousLayer] ) do
+						table.insert(nodeData.Depends, dependantNode.ID)
+					end
+				end
+			end
+		end
+
+		print(LocalScriptNodeMap)
+
+		table.insert(LocalScriptNodeJSON, {scriptPath, LocalScriptNodeMap})
 
 	-- 	local scriptNodeDepthMap = {}
 
@@ -106,10 +148,9 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 
 	-- 	-- match node depth with globalDepthMap
 	-- 	ScriptDepthNodeJSONArray[scriptPath] = scriptNodeDepthMap
-	-- end
+	end
 
 	-- put the nodes in the correct layer
-	local IndividualNodeJSONArray = {}
 	local GlobalNodeJSONArray = {}
 	-- for layerZ, nodeData in pairs( IndividualNodeJSONArray ) do
 	-- 	nodeData.Layer = layerZ
@@ -118,7 +159,7 @@ function Module:ParseEnvArraysToNodeJSONs(envParserArray)
 	-- 	nodeData.Layer = layerZ
 	-- end
 	-- return node array { ID = 'string', Depends = {'string', 'string'}, Layer = # }
-	return GlobalNodeJSONArray, IndividualNodeJSONArray
+	return GlobalNodeJSONArray, LocalScriptNodeJSON -- { scriptPath, nodeArray }
 end
 
 function Module:GetLatestParse()

@@ -122,7 +122,7 @@ function Module:GetNodeFrame(nodeClass, FlowChartFrame)
 end
 
 function Module:UpdateFramesInFlowChart( baseTreeClass, FlowChartFrame )
-	print(FlowChartFrame:GetFullName(), #baseTreeClass.nodes)
+	-- print(FlowChartFrame:GetFullName(), #baseTreeClass.nodes)
 
 	for _, nodeClass in ipairs( baseTreeClass.nodes ) do
 		for _, dependID in ipairs( nodeClass.depends ) do
